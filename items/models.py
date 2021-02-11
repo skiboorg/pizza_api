@@ -1,0 +1,185 @@
+from django.db import models
+from pytils.translit import slugify
+from django.utils.safestring import mark_safe
+from random import choices
+import string
+
+class City(models.Model):
+    name = models.CharField('Город', max_length=255, blank=False, null=True)
+    info = models.CharField('Информация о достаке',max_length=255, blank=True, null=True)
+    address = models.TextField('Адрес кафе',max_length=255, blank=True, null=True)
+    coordinates = models.CharField('Координаты', max_length=255, blank=False, null=True)
+
+    is_main = models.BooleanField('Это город по умолчанию?', default=False)
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
+
+
+
+
+class Category(models.Model):
+    name = models.CharField('Название категории', max_length=255, blank=True, null=True)
+    name_slug = models.CharField(max_length=255, blank=True, null=True, editable=False)
+    is_pizza = models.BooleanField('Это пицца?', default=False)
+    is_meat = models.BooleanField('Это шашлык?', default=False)
+
+    def save(self, *args, **kwargs):
+        self.name_slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+
+class BaseIngridient(models.Model):
+    code = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField('Базовый ингридиент', max_length=255, blank=True, null=True)
+    is_for_pizza = models.BooleanField('Для пиццы?', default=False)
+    is_for_meat = models.BooleanField('Для шашлыка?', default=False)
+    is_can_removed = models.BooleanField('Может быть удален?', default=False)
+    is_removed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = "Базовый ингридиент"
+        verbose_name_plural = "Базовые ингридиенты"
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = '-' + ''.join(choices(string.ascii_lowercase + string.digits, k=8))
+        super(BaseIngridient, self).save(*args, **kwargs)
+
+
+class AdditionalIngridient(models.Model):
+    code = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField('Дополнительный ингридиент', max_length=255, blank=True, null=True)
+    image = models.ImageField('Изображение', upload_to='items/ingridients/', blank=True)
+    is_for_pizza = models.BooleanField('Для пиццы?', default=False)
+    is_for_meat = models.BooleanField('Для шашлыка?', default=False)
+    is_added = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = "Дополнительный ингридиент"
+        verbose_name_plural = "Дополнительные ингридиенты"
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = '-' + ''.join(choices(string.ascii_lowercase + string.digits, k=8))
+        super(AdditionalIngridient, self).save(*args, **kwargs)
+
+
+class AdditionalIngridientPrice(models.Model):
+    city = models.ForeignKey(City, verbose_name='Город', on_delete=models.CASCADE, blank=False, null=True,
+                             db_index=True)
+    ingridient = models.ForeignKey(AdditionalIngridient, verbose_name='Дополнительный ингридиент',
+                                   on_delete=models.CASCADE, blank=False, null=True, db_index=True,related_name='price')
+    price = models.IntegerField('Цена', blank=False, null=True)
+
+    def __str__(self):
+        return f'{self.city.name} {self.ingridient.name} {self.price}'
+
+    class Meta:
+        verbose_name = "Цена на дополнительный ингридиент"
+        verbose_name_plural = "Цены на дополнительные ингридиенты"
+
+
+
+class Souce(models.Model):
+    name = models.CharField('Название соуса', max_length=255, blank=True, null=True)
+    image = models.ImageField('Изображение', upload_to='items/', blank=False)
+    city = models.ManyToManyField(City, verbose_name='Соус доступен в городах',
+                             blank=True, db_index=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = "Соус"
+        verbose_name_plural = "Соусы"
+
+class SoucePrice(models.Model):
+    city = models.ForeignKey(City, verbose_name='Город', on_delete=models.CASCADE, blank=False, null=True,
+                             db_index=True)
+    item = models.ForeignKey(Souce, verbose_name='Товар', on_delete=models.CASCADE, blank=False, null=True,
+                             db_index=True, related_name='prices')
+    price = models.IntegerField('Цена', blank=False, null=True)
+
+    def __str__(self):
+        return f'{self.city.name} {self.item.name} {self.price}'
+
+    class Meta:
+        verbose_name = "Цена на соус"
+        verbose_name_plural = "Цены на соусы"
+
+class Item(models.Model):
+    code = models.CharField(max_length=255, blank=True, null=True)
+    category = models.ForeignKey(Category,blank=False,null=True,on_delete=models.SET_NULL,
+                                 verbose_name='Категория',related_name='items')
+    name = models.CharField('Название товара', max_length=255, blank=True, null=True)
+    image = models.ImageField('Изображение', upload_to='items/', blank=False)
+
+
+    city = models.ManyToManyField(City, verbose_name='Продукт доступен в городах',
+                             blank=True, db_index=True)
+    base_ingridients = models.ManyToManyField(BaseIngridient, verbose_name='Базовые ингридиенты', blank=True)
+    additional_ingridients = models.ManyToManyField(AdditionalIngridient, verbose_name='Дополнительные ингридиенты',
+                                                    blank=True)
+
+    unit_name = models.CharField('Еденица изверения товара', max_length=255, blank=True, null=True)
+    min_unit = models.IntegerField('Минимальное количество', blank=False, null=True, editable=True)
+
+    discount = models.IntegerField('Скидка', default=0)
+    weight = models.IntegerField('Вес (для пиццы это вес 22см)', default=0)
+    is_recommended = models.BooleanField('Рекомендуемый товар?', default=False)
+    is_for_meat = models.BooleanField('Рекомендуемый товар для шашлыка?', default=False)
+    is_new = models.BooleanField('Товар новинка ?', default=False, db_index=True)
+
+    buys = models.IntegerField(default=0, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    def image_tag(self):
+        return mark_safe('<img src="{}" width="100" height="100" />'.format(self.image.url))
+
+    image_tag.short_description = 'Картинка'
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = '-' + ''.join(choices(string.ascii_lowercase + string.digits, k=8))
+        super(Item, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
+
+class ItemPrice(models.Model):
+    city = models.ForeignKey(City, verbose_name='Город', on_delete=models.CASCADE, blank=False, null=True,
+                             db_index=True)
+    item = models.ForeignKey(Item, verbose_name='Товар', on_delete=models.CASCADE, blank=False, null=True,
+                             db_index=True, related_name='prices')
+    price = models.IntegerField('Цена (если пицца то для размера 22см)', blank=False, null=True)
+
+    def __str__(self):
+        return f'{self.city.name} {self.item.name} {self.price}'
+
+    class Meta:
+        verbose_name = "Цена на товар"
+        verbose_name_plural = "Цены на товары"
+
+
+
