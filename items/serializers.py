@@ -1,8 +1,18 @@
 from rest_framework import serializers
 from .models import *
 
+class BannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Banners
+        fields = '__all__'
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CafeAddress
+        fields = '__all__'
 
 class CitySerializer(serializers.ModelSerializer):
+    adresses = AddressSerializer(many=True, required=False, read_only=True)
     class Meta:
         model = City
         fields = '__all__'

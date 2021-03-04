@@ -9,13 +9,18 @@ class ItemPriceInline (admin.TabularInline):
     model = ItemPrice
     extra = 0
 
+class AddressInline (admin.TabularInline):
+    model = CafeAddress
+    extra = 0
+
 class SoucePriceInline (admin.TabularInline):
     model = SoucePrice
     extra = 0
 class CityAdmin(admin.ModelAdmin):
-    inlines = [AdditionalIngridientPriceInline,ItemPriceInline,SoucePriceInline]
+    inlines = [AdditionalIngridientPriceInline,ItemPriceInline,SoucePriceInline,AddressInline]
     class Meta:
         model = City
+
 
 admin.site.register(City,CityAdmin)
 admin.site.register(Category)
@@ -27,3 +32,4 @@ admin.site.register(AdditionalIngridientPrice)
 
 admin.site.register(Souce)
 admin.site.register(SoucePrice)
+admin.site.register(Banners)

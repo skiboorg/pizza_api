@@ -8,6 +8,13 @@ from .models import *
 from user.models import Guest
 
 
+class GetBanners(generics.ListAPIView):
+    serializer_class = BannerSerializer
+
+    def get_queryset(self):
+        return Banners.objects.filter(is_active=True)
+
+
 class GetItemsByID(generics.RetrieveAPIView):
     serializer_class = FullItemSerializer
     queryset = Item.objects.filter()

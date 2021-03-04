@@ -4,11 +4,26 @@ from django.utils.safestring import mark_safe
 from random import choices
 import string
 
+class Banners(models.Model):
+    order_num = models.IntegerField("Номер по порядку", default=100)
+    image = models.ImageField('Изображение', upload_to='banners/', blank=False)
+    is_active = models.BooleanField('Показывать баннер?', default=True)
+
+
+
+    def __str__(self):
+        return f'Баннер {self.id} номер по порядку {self.order_num}'
+
+    class Meta:
+        ordering = ('-order_num',)
+        verbose_name = "Баннеры"
+        verbose_name_plural = "Баннер"
+
+
 class City(models.Model):
     name = models.CharField('Город', max_length=255, blank=False, null=True)
     info = models.CharField('Информация о достаке',max_length=255, blank=True, null=True)
-    address = models.TextField('Адрес кафе',max_length=255, blank=True, null=True)
-    coordinates = models.CharField('Координаты', max_length=255, blank=False, null=True)
+
 
     is_main = models.BooleanField('Это город по умолчанию?', default=False)
     def __str__(self):
@@ -19,6 +34,18 @@ class City(models.Model):
         verbose_name_plural = "Города"
 
 
+class CafeAddress(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, blank=False, null=True,
+                             verbose_name='Город', related_name='adresses')
+    address = models.TextField('Адрес кафе', max_length=255, blank=True, null=True)
+    coordinates = models.CharField('Координаты', max_length=255, blank=False, null=True)
+
+    def __str__(self):
+        return f'{self.city.name} - {self.address}'
+
+    class Meta:
+        verbose_name = "Адрес"
+        verbose_name_plural = "Адреса"
 
 
 class Category(models.Model):

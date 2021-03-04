@@ -1,6 +1,7 @@
 from django.db import models
 
 
+
 class OrderItem(models.Model):
     content = models.TextField(blank=True, null=True)
 
@@ -49,3 +50,18 @@ class Order(models.Model):
     class Meta:
         verbose_name = "Заказ"
         verbose_name_plural = "Заказы"
+
+
+class Payment(models.Model):
+    sberId = models.CharField(max_length=255, null=True, blank=True)
+    order = models.ForeignKey(Order,
+                              blank=True,
+                              null=True,
+                              default=None,
+                              on_delete=models.CASCADE,
+                              verbose_name='Заказ',
+                              related_name='order_payment')
+    status = models.BooleanField(default=False)
+    amount = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
