@@ -31,9 +31,11 @@ class UserUpdate(APIView):
         else:
             print(serializer.errors)
             return Response(status=400)
+
 class GetUser(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
+    print(serializer_class.data)
     def get_object(self):
         return self.request.user
     # def get(self, request):

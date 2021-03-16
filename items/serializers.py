@@ -60,6 +60,7 @@ class ItemPriceSerializer(serializers.ModelSerializer):
         fields = [
             'city',
             'price',
+            'price_33',
         ]
 
 class SimpleItemSerializer(serializers.ModelSerializer):

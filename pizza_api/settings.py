@@ -116,6 +116,8 @@ STATICFILES_DIRS = [
 ]
 #STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 MEDIA_URL = f'/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

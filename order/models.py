@@ -17,6 +17,7 @@ class Order(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
     payment = models.CharField(max_length=255, null=True, blank=True)
+    cafe_address = models.CharField(max_length=255, null=True, blank=True)
     delivery_type = models.CharField(max_length=255, null=True, blank=True)
     need_callback = models.BooleanField(default=False)
     no_cashback = models.BooleanField(default=True)
@@ -27,7 +28,7 @@ class Order(models.Model):
     price = models.IntegerField(default=0)
     bonuses = models.IntegerField(default=0)
     promo = models.IntegerField(default=0)
-    cashback = models.IntegerField(default=0)
+    cashback = models.IntegerField(default=0, blank=True, null=True)
 
     street = models.CharField(max_length=50, blank=True, null=True)
     house = models.CharField(max_length=50, blank=True, null=True)
@@ -37,7 +38,7 @@ class Order(models.Model):
     floor = models.CharField(max_length=50, blank=True, null=True)
 
     order_content = models.TextField(blank=True,null=True,default='')
-
+    is_payed = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

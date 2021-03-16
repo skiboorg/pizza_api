@@ -86,17 +86,25 @@ def add_to_cart(cart,data):
     item_code = create_hash(cart, data)
 
     city = City.objects.get(id=city_id)
+    item_prices = ItemPrice.objects.get(city=city, item_id=item_id)
+    if selected_size == 33:
+        item_price = item_prices.price_33
+    else:
+        item_price = item_prices.price
 
-    item_price = ItemPrice.objects.get(city=city,item_id=item_id)
+    print('item_price',item_price)
+    print('selected_size',selected_size)
 
 
     if item:
         if user:
+            print('adding for user')
             try:
                 cart_item = CartItem.objects.get(code=item_code)
+                print('item found', cart_item)
                 cart_item.quantity += units
-                cart_item.price_per_unit = item_price.price
-                cart_item.price = cart_item.quantity * item_price.price
+                cart_item.price_per_unit = item_price
+                cart_item.price = cart_item.quantity * item_price
                 cart_item.save()
             except CartItem.DoesNotExist:
                 cart_item = CartItem.objects.create(client=user,
@@ -106,17 +114,20 @@ def add_to_cart(cart,data):
                                                     quantity=units,
                                                     code=item_code,
                                                     city=city,
-                                                    price_per_unit=item_price.price,
-                                                    price=item_price.price * units,
-                                                    bonuses=item_price.price * settings.BONUS_PERCENT
+                                                    price_per_unit=item_price,
+                                                    price=item_price * units,
+                                                    bonuses=item_price * settings.BONUS_PERCENT
                                                     )
+                print(cart_item)
+                print('item found', cart_item)
                 is_created = True
         if guest:
             try:
                 cart_item = CartItem.objects.get(code=item_code)
+
                 cart_item.quantity += units
-                cart_item.price_per_unit = item_price.price
-                cart_item.price = cart_item.quantity * item_price.price
+                cart_item.price_per_unit = item_price
+                cart_item.price = cart_item.quantity * item_price
                 cart_item.save()
             except CartItem.DoesNotExist:
                 cart_item = CartItem.objects.create(guest=guest,
@@ -126,9 +137,9 @@ def add_to_cart(cart,data):
                                                     quantity=units,
                                                     code=item_code,
                                                     city=city,
-                                                    price_per_unit=item_price.price,
-                                                    price=item_price.price*units,
-                                                    bonuses=item_price.price * settings.BONUS_PERCENT
+                                                    price_per_unit=item_price,
+                                                    price=item_price*units,
+                                                    bonuses=item_price * settings.BONUS_PERCENT
                                                     )
                 is_created = True
 

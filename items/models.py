@@ -169,7 +169,14 @@ class Item(models.Model):
     min_unit = models.IntegerField('Минимальное количество', blank=False, null=True, editable=True)
 
     discount = models.IntegerField('Скидка', default=0)
-    weight = models.IntegerField('Вес (для пиццы это вес 22см)', default=0)
+
+    weight = models.IntegerField('Вес (для пиццы это вес 28см)', default=0)
+    weight_33 = models.IntegerField('Вес для пиццы 33см)', default=0)
+    callories = models.IntegerField('Калорий', default=0)
+    fat = models.IntegerField('Жиры', default=0)
+    belki = models.IntegerField('Белки', default=0)
+    uglevod = models.IntegerField('Углеводы', default=0)
+
     is_recommended = models.BooleanField('Рекомендуемый товар?', default=False)
     is_for_meat = models.BooleanField('Рекомендуемый товар для шашлыка?', default=False)
     is_new = models.BooleanField('Товар новинка ?', default=False, db_index=True)
@@ -199,7 +206,8 @@ class ItemPrice(models.Model):
                              db_index=True)
     item = models.ForeignKey(Item, verbose_name='Товар', on_delete=models.CASCADE, blank=False, null=True,
                              db_index=True, related_name='prices')
-    price = models.IntegerField('Цена (если пицца то для размера 22см)', blank=False, null=True)
+    price = models.IntegerField('Цена (если пицца то для размера 28см)', blank=False, null=True)
+    price_33 = models.IntegerField('Цена для пиццы 33см', default=0)
 
     def __str__(self):
         return f'{self.city.name} {self.item.name} {self.price}'
