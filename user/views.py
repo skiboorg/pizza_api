@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .services import create_random_string
+from .services import send_sms
 from .serializers import *
 from .models import *
 from rest_framework import generics
@@ -61,6 +61,15 @@ class UserRecoverPassword(APIView):
 class DeleteAddress(generics.DestroyAPIView):
     serializer_class = UserAdressSerializer
     queryset = UserAddress.objects.filter()
+
+
+class SendCodeSMS(APIView):
+    def post(self, request):
+        print(request.data)
+        phone = request.data.get('phone')
+        result = send_sms(phone,True)
+
+        return Response(result,status=200)
 
 
 class UsePromo(APIView):

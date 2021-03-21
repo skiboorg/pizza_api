@@ -11,7 +11,7 @@ import string
 import settings
 import requests
 from django.views.decorators.clickjacking import xframe_options_exempt
-from django.shortcuts import render
+from django.shortcuts import render,HttpResponseRedirect
 
 
 class PayFail(APIView):
@@ -28,7 +28,11 @@ def pay_success(request):
     payment.save()
     payment.order.is_payed = True
     payment.order.save()
-    return render(request, 'pay_success.html', locals())
+    if source=='mobile':
+        return render(request, 'pay_success.html', locals())
+    else:
+        return HttpResponseRedirect(f'{settings.RETURN_URL}/order/{payment.order.order_code}')
+
 
 class NewOrder(APIView):
     def post(self,request):

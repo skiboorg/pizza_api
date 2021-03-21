@@ -10,5 +10,6 @@ urlpatterns = [
     path('add_address', views.AddAddress.as_view()),
     path('delete_address/<int:pk>', views.DeleteAddress.as_view()),
     path('use_promo', views.UsePromo.as_view()),
+    path('send_code_sms', views.SendCodeSMS.as_view()),
 
 ]

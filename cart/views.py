@@ -9,6 +9,30 @@ from .services import *
 from user.models import Guest
 import settings
 
+
+class AddPerson(APIView):
+
+    def post(self, request):
+        data = request.data
+        session_id = data.get('session_id')
+        cart = check_if_cart_exists(request, session_id)
+        cart.persons += 1
+        cart.save()
+        return Response(status=200)
+
+
+class DelPerson(APIView):
+
+    def post(self, request):
+        data = request.data
+        session_id = data.get('session_id')
+        cart = check_if_cart_exists(request, session_id)
+        if cart.persons > 1:
+            cart.persons -= 1
+            cart.save()
+        return Response(status=200)
+
+
 class DeleteItem(APIView):
     def post(self, request):
         data = request.data

@@ -89,6 +89,7 @@ class Cart(models.Model):
                                                verbose_name='Соусы')
     items = models.ManyToManyField(CartItem, blank=True, verbose_name='Товары')
 
+    persons = models.IntegerField(default=1)
     total_price = models.IntegerField(default=0)
     total_bonuses = models.IntegerField(default=0)
 
