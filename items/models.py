@@ -63,6 +63,7 @@ class Category(models.Model):
         return f'{self.name}'
 
     class Meta:
+        ordering = ('order_num',)
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
@@ -79,6 +80,7 @@ class BaseIngridient(models.Model):
         return f'{self.name}'
 
     class Meta:
+        ordering = ('name',)
         verbose_name = "Базовый ингридиент"
         verbose_name_plural = "Базовые ингридиенты"
 
@@ -153,6 +155,7 @@ class SoucePrice(models.Model):
         verbose_name_plural = "Цены на соусы"
 
 class Item(models.Model):
+    order_num = models.IntegerField(default=100)
     code = models.CharField(max_length=255, blank=True, null=True)
     category = models.ForeignKey(Category,blank=False,null=True,on_delete=models.SET_NULL,
                                  verbose_name='Категория',related_name='items')
@@ -196,9 +199,10 @@ class Item(models.Model):
         super(Item, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.name} {self.min_unit} {self.unit_name}'
 
     class Meta:
+        ordering = ('order_num',)
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
 

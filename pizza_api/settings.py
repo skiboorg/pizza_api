@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'ckeditor',
 
+
     'user',
     'items',
     'cart',

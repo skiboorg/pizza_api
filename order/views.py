@@ -12,6 +12,7 @@ import settings
 import requests
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.shortcuts import render,HttpResponseRedirect
+from .services import generate_pdf
 
 
 class PayFail(APIView):
@@ -49,9 +50,9 @@ class NewOrder(APIView):
             delivery_type=order_data.get('delivery_type'),
             need_callback=order_data.get('need_callback'),
             no_cashback=order_data.get('no_cashback'),
-            # persons = 1,order_data.get('persons'),
+            persons = cart.persons,
             comment=order_data.get('comment'),
-            # date = order_data.get('date'),
+            date = order_data.get('date'),
             time=order_data.get('time'),
             price=cart.total_price - data.get('bonuses') - data.get('promo'),
             bonuses=data.get('bonuses'),
@@ -96,9 +97,9 @@ class NewOrder(APIView):
             new_order.order_content += f'Конструктор {text} X {i.quantity} \n'
         for i in all_cart_souses:
             new_order.order_content += f'{i.item.name} X {i.quantity} '
-        new_order.order_code = f'{new_order.id}-'.join(choices(string.digits, k=3))
+        new_order.order_code = f''.join(choices(string.digits, k=4))
         new_order.save()
-        erase_cart(cart)
+        # erase_cart(cart)
         if new_order.payment == 'online':
             new_order.is_payed = False
             new_order.save()
@@ -130,4 +131,5 @@ class NewOrder(APIView):
                     },
                     status=200)
         else:
+            generate_pdf(new_order,cart)
             return Response({'code': new_order.order_code}, status=200)

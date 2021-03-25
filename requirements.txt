@@ -5,3 +5,4 @@ djoser
 pytils
 django-ckeditor
 django
+python-pdf
