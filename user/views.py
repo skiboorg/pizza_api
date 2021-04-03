@@ -63,6 +63,17 @@ class DeleteAddress(generics.DestroyAPIView):
     queryset = UserAddress.objects.filter()
 
 
+class ChangePassword(APIView):
+    def post(self, request):
+        print(request.data)
+        user = User.objects.get(phone = request.data['phone'])
+        result = send_sms(user.phone, True, 'Ваш новый пароль : ')
+        user.set_password(result['code'])
+        user.save()
+        return Response(status=200)
+
+
+
 class SendCodeSMS(APIView):
     def post(self, request):
         print(request.data)

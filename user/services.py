@@ -27,9 +27,10 @@ def send_sms(phone, is_code=False, text=''):
     result = {'code':False}
     if is_code:
         code = ''.join(choices(string.digits, k=4))
-        sms_text = code
+        sms_text = text + code
     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={phone}&mes={sms_text}'
     response = requests.post(url)
+    print(response.text)
     if 'ERROR' not in response.text:
         result = {'code':code}
     return result

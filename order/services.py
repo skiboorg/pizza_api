@@ -20,30 +20,33 @@ def generate_pdf(order,cart):
                 item_price = item_prices.price_33
             else:
                 item_price = item_prices.price
-            item += f'Пицца - {i.item.name} {i.quantity}шт {i.selected_size}см {item_price}руб ('
+            item += f'Пицца - {i.item.name} {i.quantity}шт {i.selected_size}см {i.quantity * item_price}руб '
         else:
             item_price = ItemPrice.objects.get(city=i.city, item=i.item)
-            item += f'{i.item.category.name} - {i.item.name} {i.quantity}шт {item_price.price}руб'
+            if i.item.category.is_meat:
+                item += f'{i.item.category.name} - {i.item.name} {i.quantity * i.item.min_unit}{i.item.unit_name} {i.quantity * item_price.price}руб'
+            else:
+                item += f'{i.item.category.name} - {i.item.name} {i.quantity}шт  {i.quantity * item_price.price}руб'
 
         if i.item.category.is_pizza:
             for b_i in i.base_ingridients.all():
                 if b_i.is_removed: #not
-                    item += f'{b_i.item.name}, '
+                    item += f'Убрано - {b_i.item.name}, '
             for a_i in i.additional_ingridients.all():
                 if a_i.is_added:
                     item_price = AdditionalIngridientPrice.objects.get(city=i.city, ingridient=a_i.item)
-                    item += f'{a_i.item.name} ({item_price.price}руб), '
+                    item += f'Добавлено - {a_i.item.name} ({item_price.price}руб), '
         items.append(item)
     for i in all_cart_constructors:
         constructor = ''
         text = ''
         for i_p in i.items.all():
             text += f'{i_p.name}'
-        constructor += f'Конструктор - {text} {i.quantity}шт {i.price}руб'
+        constructor += f'Конструктор - {text} {i.quantity}шт {i.quantity * i.price}руб'
         constructors.append(constructor)
     for i in all_cart_souses:
         item_price = SoucePrice.objects.get(city=i.city, item=i.item)
-        souses.append(f'Соус  - {i.item.name} {i.quantity}шт {item_price.price}руб')
+        souses.append(f'Соус  - {i.item.name} {i.quantity}шт {i.quantity * item_price.price}руб')
     html = render_to_string('order.html',
                             {
                                 'order_code': order.order_code,

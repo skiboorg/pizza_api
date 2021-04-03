@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/cart/', include('cart.urls')),
     path('api/user/', include('user.urls')),
     path('api/order/', include('order.urls')),
+    path('api/promotion/', include('promotion.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
