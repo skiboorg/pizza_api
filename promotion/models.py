@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Promotion(models.Model):
+    category = models.ForeignKey('items.Category', on_delete=models.CASCADE,null=True,blank=True)
     order_num = models.IntegerField('Порядок вывода', default=100)
     name = models.CharField('Название акции', max_length=255, blank=True, null=True)
     image = models.ImageField('Изображение', upload_to='promotions/', blank=True)
