@@ -1,7 +1,10 @@
 from user.models import Guest
 from .models import *
+from items.models import Item
 from items.models import City, ItemPrice, AdditionalIngridientPrice
 import settings
+import uuid
+
 
 def check_if_guest_exists(session_id):
     guest, created = Guest.objects.get_or_create(session=session_id)
@@ -208,4 +211,25 @@ def calculate_total_cart_price(cart):
         cart.total_price += i.price
         cart.total_bonuses += i.bonuses
     cart.save()
+    if cart.total_price >= 2000:
+        gift = Item.objects.get(is_gift=True)
+        item_in = False
+        for i in all_cart_items:
+            if i.item == gift:
+                print('gift in')
+                item_in = True
+                break
+        if not item_in:
+            new_item = CartItem.objects.create(item=gift,price=0,units=1,city_id=1,price_per_unit=0,quantity=1,code=uuid.uuid4())
+            cart.items.add(new_item)
+            print('gift created')
+
+        print('more2000')
+    else:
+        gift = Item.objects.get(is_gift=True)
+        for i in all_cart_items:
+            if i.item == gift:
+                i.delete()
+                cart.items.remove(i)
+        print('less2000')
 

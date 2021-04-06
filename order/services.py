@@ -1,6 +1,10 @@
 import pydf
+import requests
 from django.template.loader import render_to_string
 from items.models import ItemPrice,SoucePrice,AdditionalIngridientPrice
+import settings
+from django.core.mail import send_mail,EmailMessage
+from cart.services import erase_cart
 
 def generate_pdf(order,cart):
     items = []
@@ -9,9 +13,6 @@ def generate_pdf(order,cart):
     all_cart_items = cart.items.all()
     all_cart_constructors = cart.pizza_constructors.all()
     all_cart_souses = cart.souces.all()
-
-
-
     for i in all_cart_items:
         item=''
         if i.item.category.is_pizza:
@@ -75,5 +76,18 @@ def generate_pdf(order,cart):
 
                             })
     pdf = pydf.generate_pdf(html)
-    with open(f'orders/{order.order_code}.pdf', mode= 'wb') as f:
+    filename = f'orders/{order.order_code}.pdf'
+    with open(filename, mode= 'wb') as f:
         f.write(pdf)
+    send_email(filename,order)
+    erase_cart(cart)
+
+
+def send_email(filename,order):
+    url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+    response = requests.post(url)
+    print(response.text)
+    mail = EmailMessage('Новый заказ', 'Новый заказ', settings.MAIL_TO, (settings.MAIL_TO,))
+    # mail.attach(file.name, file.read(), file.content_type)
+    mail.attach_file(filename)
+    mail.send()

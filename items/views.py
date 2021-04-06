@@ -8,6 +8,12 @@ from .models import *
 from user.models import Guest
 
 
+class SetDiscount(APIView):
+    def get(self,request):
+        return Response(status=200)
+class RemoveDiscount(APIView):
+    def get(self,request):
+        return Response(status=200)
 class GetBanners(generics.ListAPIView):
     serializer_class = BannerSerializer
 
@@ -19,6 +25,10 @@ class GetItemsByID(generics.RetrieveAPIView):
     serializer_class = FullItemSerializer
     queryset = Item.objects.filter()
 
+
+class GetCategories(generics.ListAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
 
 class GetCities(generics.ListAPIView):
     serializer_class = CitySerializer

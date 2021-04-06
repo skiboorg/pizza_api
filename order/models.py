@@ -7,6 +7,7 @@ class OrderItem(models.Model):
 
 
 class Order(models.Model):
+    cart = models.ForeignKey('cart.Cart', on_delete=models.SET_NULL,null=True,blank=True)
     order_code = models.CharField(max_length=255, null=True, blank=True)
     client = models.ForeignKey('user.User', blank=True, null=True, default=None, on_delete=models.CASCADE,
                                verbose_name='Заказ клиента')

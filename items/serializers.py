@@ -18,7 +18,16 @@ class CitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CategoryItemSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Item
+        # fields = '__all__'
+        exclude = ['city', 'base_ingridients', 'additional_ingridients']
+
 class CategorySerializer(serializers.ModelSerializer):
+    items = CategoryItemSerializer(many=True,required=False,read_only=True)
     class Meta:
         model = Category
         fields = '__all__'
@@ -53,7 +62,6 @@ class AdditionalIngridientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class ItemPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPrice
@@ -63,12 +71,15 @@ class ItemPriceSerializer(serializers.ModelSerializer):
             'price_33',
         ]
 
+
 class SimpleItemSerializer(serializers.ModelSerializer):
     prices = ItemPriceSerializer(many=True, required=False, read_only=True)
     category = CategorySerializer(many=False, required=False, read_only=True)
+
     class Meta:
         model = Item
         fields = '__all__'
+
 
 class ShortItemSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False, required=False, read_only=True)
@@ -78,6 +89,8 @@ class ShortItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = '__all__'
+        # exclude = ['city','base_ingridients','additional_ingridients']
+
 
 class FullItemSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=False, required=False, read_only=True)

@@ -8,16 +8,15 @@ from cart.services import *
 from user.models import Guest
 from random import choices
 import string
-import settings
 import requests
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.shortcuts import render,HttpResponseRedirect
 from .services import generate_pdf
+import settings
 
-
-class PayFail(APIView):
-    def get(self, request):
-        return Response(status=200)
+@xframe_options_exempt
+def pay_fail(request):
+        return HttpResponseRedirect(f'{settings.RETURN_URL}/order/fail')
 
 @xframe_options_exempt
 def pay_success(request):
@@ -29,6 +28,7 @@ def pay_success(request):
     payment.save()
     payment.order.is_payed = True
     payment.order.save()
+    generate_pdf(payment.order,payment.order.cart)
     if source=='mobile':
         return render(request, 'pay_success.html', locals())
     else:
@@ -44,6 +44,7 @@ class NewOrder(APIView):
         print(data)
         cart = check_if_cart_exists(request, session_id)
         new_order = Order.objects.create(
+            cart=cart,
             name=order_data.get('name'),
             phone=order_data.get('phone'),
             payment=order_data.get('payment'),
@@ -99,7 +100,7 @@ class NewOrder(APIView):
             new_order.order_content += f'{i.item.name} X {i.quantity} '
         new_order.order_code = f''.join(choices(string.digits, k=4))
         new_order.save()
-        # erase_cart(cart)
+
         if new_order.payment == 'online':
             new_order.is_payed = False
             new_order.save()

@@ -4,12 +4,11 @@ from django.utils.safestring import mark_safe
 from random import choices
 import string
 
+
 class Banners(models.Model):
     order_num = models.IntegerField("Номер по порядку", default=100)
     image = models.ImageField('Изображение', upload_to='banners/', blank=False)
     is_active = models.BooleanField('Показывать баннер?', default=True)
-
-
 
     def __str__(self):
         return f'Баннер {self.id} номер по порядку {self.order_num}'
@@ -23,9 +22,8 @@ class Banners(models.Model):
 class City(models.Model):
     name = models.CharField('Город', max_length=255, blank=False, null=True)
     info = models.CharField('Информация о достаке',max_length=255, blank=True, null=True)
-
-
     is_main = models.BooleanField('Это город по умолчанию?', default=False)
+
     def __str__(self):
         return f'{self.name}'
 
@@ -126,7 +124,6 @@ class AdditionalIngridientPrice(models.Model):
         verbose_name_plural = "Цены на дополнительные ингридиенты"
 
 
-
 class Souce(models.Model):
     name = models.CharField('Название соуса', max_length=255, blank=True, null=True)
     image = models.ImageField('Изображение', upload_to='items/', blank=False)
@@ -139,6 +136,7 @@ class Souce(models.Model):
     class Meta:
         verbose_name = "Соус"
         verbose_name_plural = "Соусы"
+
 
 class SoucePrice(models.Model):
     city = models.ForeignKey(City, verbose_name='Город', on_delete=models.CASCADE, blank=False, null=True,
@@ -153,6 +151,7 @@ class SoucePrice(models.Model):
     class Meta:
         verbose_name = "Цена на соус"
         verbose_name_plural = "Цены на соусы"
+
 
 class Item(models.Model):
     order_num = models.IntegerField(default=100)
@@ -184,6 +183,7 @@ class Item(models.Model):
     is_recommended = models.BooleanField('Рекомендуемый товар?', default=False)
     is_for_meat = models.BooleanField('Рекомендуемый товар для шашлыка?', default=False)
     is_new = models.BooleanField('Товар новинка ?', default=False, db_index=True)
+    is_gift = models.BooleanField('Товар подарок ?', default=False, db_index=True)
 
     buys = models.IntegerField(default=0, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
@@ -206,11 +206,13 @@ class Item(models.Model):
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
 
+
 class ItemPrice(models.Model):
     city = models.ForeignKey(City, verbose_name='Город', on_delete=models.CASCADE, blank=False, null=True,
                              db_index=True)
     item = models.ForeignKey(Item, verbose_name='Товар', on_delete=models.CASCADE, blank=False, null=True,
                              db_index=True, related_name='prices')
+    is_discount = models.BooleanField(default=False)
     price = models.IntegerField('Цена (если пицца то для размера 28см)', blank=False, null=True)
     price_33 = models.IntegerField('Цена для пиццы 33см', default=0)
 

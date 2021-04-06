@@ -1,4 +1,4 @@
-import os
+import os,settings
 from pathlib import Path
 
 
@@ -15,6 +15,12 @@ AUTH_USER_MODEL = 'user.User'
 CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
+EMAIL_HOST_USER = settings.YA_USER
+EMAIL_HOST_PASSWORD = settings.YA_PASSWORD
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = settings.MAIL_TO
 
 # Application definition
 
