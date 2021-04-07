@@ -83,7 +83,9 @@ def generate_pdf(order,cart):
     send_mail('Новый заказ', None, settings.MAIL_TO, (settings.MAIL_TO,),
               fail_silently=False, html_message=html)
     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
-    response = requests.post(url)
+    url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones=+79129140946&mes=Новый заказ №{order.order_code}'
+    response1 = requests.post(url)
+    response2 = requests.post(url1)
     erase_cart(cart)
 
 
