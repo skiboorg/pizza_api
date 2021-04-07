@@ -212,7 +212,8 @@ class ItemPrice(models.Model):
                              db_index=True)
     item = models.ForeignKey(Item, verbose_name='Товар', on_delete=models.CASCADE, blank=False, null=True,
                              db_index=True, related_name='prices')
-    is_discount = models.BooleanField(default=False)
+
+    old_price = models.IntegerField( default=0)
     price = models.IntegerField('Цена (если пицца то для размера 28см)', blank=False, null=True)
     price_33 = models.IntegerField('Цена для пиццы 33см', default=0)
 

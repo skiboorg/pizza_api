@@ -67,6 +67,7 @@ class ItemPriceSerializer(serializers.ModelSerializer):
         model = ItemPrice
         fields = [
             'city',
+            'old_price',
             'price',
             'price_33',
         ]
@@ -80,9 +81,13 @@ class SimpleItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'
 
+class ShortCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
 
 class ShortItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=False, required=False, read_only=True)
+    category = ShortCategorySerializer(many=False, required=False, read_only=True)
     base_ingridients = BaseIngridientSerializer(many=True, required=False, read_only=True)
     prices = ItemPriceSerializer(many=True, required=False, read_only=True)
 
