@@ -88,13 +88,19 @@ class ShortCategorySerializer(serializers.ModelSerializer):
 
 class ShortItemSerializer(serializers.ModelSerializer):
     category = ShortCategorySerializer(many=False, required=False, read_only=True)
-    base_ingridients = BaseIngridientSerializer(many=True, required=False, read_only=True)
+    base_ingridients = serializers.SerializerMethodField()
     prices = ItemPriceSerializer(many=True, required=False, read_only=True)
 
     class Meta:
         model = Item
-        fields = '__all__'
-        # exclude = ['city','base_ingridients','additional_ingridients']
+        exclude = ['additional_ingridients','discount','created_at','is_new','buys','code','weight','weight_33','city']
+
+    def get_base_ingridients(self,obj):
+        val = ''
+        items = obj.base_ingridients.all()
+        for item in items:
+            val += f'{item.name.lower()}, '
+        return val[:-2]
 
 
 class FullItemSerializer(serializers.ModelSerializer):
