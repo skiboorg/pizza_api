@@ -19,12 +19,19 @@ class CitySerializer(serializers.ModelSerializer):
 
 
 class CategoryItemSerializer(serializers.ModelSerializer):
-
-
+    base_ingridients = serializers.SerializerMethodField()
     class Meta:
         model = Item
         # fields = '__all__'
-        exclude = ['city', 'base_ingridients', 'additional_ingridients']
+        exclude = ['city', 'additional_ingridients']
+
+    def get_base_ingridients(self,obj):
+        val = ''
+        items = obj.base_ingridients.all()
+        for item in items:
+            val += f'{item.name.lower()}, '
+        return val[:-2]
+
 
 class CategorySerializer(serializers.ModelSerializer):
     items = CategoryItemSerializer(many=True,required=False,read_only=True)

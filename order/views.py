@@ -104,7 +104,7 @@ class NewOrder(APIView):
         if new_order.payment == 'online':
             new_order.is_payed = False
             new_order.save()
-            response = requests.get('https://3dsec.sberbank.ru/payment/rest/register.do?'
+            response = requests.get('https://securepayments.sberbank.ru/payment/rest/register.do?'
                                     f'amount={new_order.price}00&'
                                     'currency=643&'
                                     'language=ru&'
