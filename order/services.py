@@ -75,11 +75,15 @@ def generate_pdf(order,cart):
                                 'souses':souses
 
                             })
-    pdf = pydf.generate_pdf(html)
-    filename = f'orders/{order.order_code}.pdf'
-    with open(filename, mode= 'wb') as f:
-        f.write(pdf)
-    send_email(filename,order)
+    # pdf = pydf.generate_pdf(html)
+    # filename = f'orders/{order.order_code}.pdf'
+    # with open(filename, mode= 'wb') as f:
+    #     f.write(pdf)
+    # send_email(filename,order)
+    send_mail('Новый заказ', None, settings.MAIL_TO, (settings.MAIL_TO,),
+              fail_silently=False, html_message=html)
+    url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+    response = requests.post(url)
     erase_cart(cart)
 
 

@@ -55,13 +55,17 @@ def create_hash(cart, data):
     code =item.get('code')
 
     if not is_meat:
-        for b_i in base_ingridients:
-            if b_i.get("is_removed"):
-                b_i_summ += f'{b_i.get("code") }'
+        # added
+        try:
+            for b_i in base_ingridients:
+                if b_i.get("is_removed"):
+                    b_i_summ += f'{b_i.get("code") }'
 
-        for a_i in additional_ingridients:
-            if a_i.get("is_added"):
-                a_i_summ += f'{a_i.get("code") }'
+            for a_i in additional_ingridients:
+                if a_i.get("is_added"):
+                    a_i_summ += f'{a_i.get("code") }'
+        except:
+            pass
 
 
     total_summ = f"{item.get('id')+ item.get('category').get('id') + selected_size + weight}-{a_i_summ}-{b_i_summ}" #+ units
@@ -147,21 +151,25 @@ def add_to_cart(cart,data):
                 is_created = True
 
     if is_created and not is_meat:
-        for i in base_ingridients:
-            base_ingridient = CartItemBaseIngrigient.objects.create(item_id=i.get('id'),is_removed=i.get('is_removed'))
-            cart_item.base_ingridients.add(base_ingridient)
+        # added
+        try:
+            for i in base_ingridients:
+                base_ingridient = CartItemBaseIngrigient.objects.create(item_id=i.get('id'),is_removed=i.get('is_removed'))
+                cart_item.base_ingridients.add(base_ingridient)
 
-        for i in additional_ingridients:
-            additional_ingridient = CartItemAdditionalIngrigient.objects.create(item_id=i.get('id'),is_added=i.get('is_added'))
-            cart_item.additional_ingridients.add(additional_ingridient)
+            for i in additional_ingridients:
+                additional_ingridient = CartItemAdditionalIngrigient.objects.create(item_id=i.get('id'),is_added=i.get('is_added'))
+                cart_item.additional_ingridients.add(additional_ingridient)
 
-            if i.get('is_added'):
-                is_added = True
-                additional_ingridient_price = AdditionalIngridientPrice.objects.get(city=city, ingridient_id=i.get('id'))
-                cart_item.ingridients_price += additional_ingridient_price.price
-                cart_item.price += additional_ingridient_price.price
-                cart_item.price_per_unit += additional_ingridient_price.price
-                cart_item.bonuses += additional_ingridient_price.price * settings.BONUS_PERCENT
+                if i.get('is_added'):
+                    is_added = True
+                    additional_ingridient_price = AdditionalIngridientPrice.objects.get(city=city, ingridient_id=i.get('id'))
+                    cart_item.ingridients_price += additional_ingridient_price.price
+                    cart_item.price += additional_ingridient_price.price
+                    cart_item.price_per_unit += additional_ingridient_price.price
+                    cart_item.bonuses += additional_ingridient_price.price * settings.BONUS_PERCENT
+        except:
+            pass
 
         if is_added:
             cart_item.save()
