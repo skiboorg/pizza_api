@@ -27,8 +27,8 @@ class CategoryAdmin(admin.ModelAdmin):
         model = Category
 
 class ItemAdmin(admin.ModelAdmin):
-    list_filter = ('category','is_recommended')
-    list_display = ['order_num', 'name','min_unit','unit_name', 'is_recommended']
+    list_filter = ('category','is_recommended','is_active')
+    list_display = ['order_num', 'name','min_unit','unit_name', 'is_recommended','is_active']
     class Meta:
         model = Item
 

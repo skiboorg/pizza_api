@@ -184,6 +184,7 @@ class Item(models.Model):
     is_for_meat = models.BooleanField('Рекомендуемый товар для шашлыка?', default=False)
     is_new = models.BooleanField('Товар новинка ?', default=False, db_index=True)
     is_gift = models.BooleanField('Товар подарок ?', default=False, db_index=True)
+    is_active = models.BooleanField('Отображать ?', default=True, db_index=True)
 
     buys = models.IntegerField(default=0, editable=False)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)

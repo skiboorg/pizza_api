@@ -57,7 +57,7 @@ class GetCities(generics.ListAPIView):
 class GetItemsByCity(generics.ListAPIView):
     serializer_class = ShortItemSerializer
     def get_queryset(self):
-        return Item.objects.filter(city=self.request.query_params.get('city_id'))
+        return Item.objects.filter(is_active=True, city=self.request.query_params.get('city_id'))
 
 class GetSousesByCity(generics.ListAPIView):
     serializer_class = SouceSerializer

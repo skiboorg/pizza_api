@@ -126,7 +126,7 @@ class ShortItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        exclude = ['additional_ingridients','discount','created_at','is_new','buys','code','weight','weight_33','city']
+        exclude = ['additional_ingridients','discount','created_at','is_new','buys','code','weight_33','city']
 
     def get_base_ingridients(self,obj):
         val = ''
