@@ -20,10 +20,28 @@ class CitySerializer(serializers.ModelSerializer):
 
 class CategoryItemSerializer(serializers.ModelSerializer):
     base_ingridients = serializers.SerializerMethodField()
+    is_pizza = serializers.SerializerMethodField()
+    kbgu = serializers.SerializerMethodField()
     class Meta:
         model = Item
         # fields = '__all__'
-        exclude = ['city', 'additional_ingridients']
+        exclude = [
+            'city',
+            'additional_ingridients',
+            'order_num',
+            'code',
+            'discount',
+            'is_recommended',
+            'is_new',
+            'buys',
+            'created_at',
+            'category',
+            'weight_33',
+            'callories',
+            'fat',
+            'belki',
+            'uglevod',
+        ]
 
     def get_base_ingridients(self,obj):
         val = ''
@@ -32,6 +50,14 @@ class CategoryItemSerializer(serializers.ModelSerializer):
             val += f'{item.name.lower()}, '
         return val[:-2]
 
+    def get_is_pizza(self, obj):
+        return obj.category.is_pizza
+
+    def get_kbgu(self, obj):
+        if obj.callories > 0:
+            return f'{obj.callories}/{obj.fat}/{obj.belki}/{obj.uglevod}'
+        else:
+            return ''
 
 class CategorySerializer(serializers.ModelSerializer):
     items = CategoryItemSerializer(many=True,required=False,read_only=True)

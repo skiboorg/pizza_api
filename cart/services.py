@@ -219,7 +219,17 @@ def calculate_total_cart_price(cart):
         cart.total_price += i.price
         cart.total_bonuses += i.bonuses
     cart.save()
-    if cart.total_price >= 2000:
+
+    roll_price = 0
+
+    for i in all_cart_items:
+
+        if i.item.category.id == 4:
+            roll_price+=i.price
+
+    print(roll_price)
+
+    if roll_price >= 2000:
         gift = Item.objects.get(is_gift=True)
         item_in = False
         for i in all_cart_items:

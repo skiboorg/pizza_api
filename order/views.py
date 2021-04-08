@@ -92,13 +92,15 @@ class NewOrder(APIView):
                     new_order.order_content += f'{a_i.item.name} '
             new_order.order_content += f')\n '
         for i in all_cart_constructors:
-            text=''
+            text = ''
             for i_p in i.items.all():
                 text += f'{i_p.name} '
             new_order.order_content += f'Конструктор {text} X {i.quantity} \n'
         for i in all_cart_souses:
             new_order.order_content += f'{i.item.name} X {i.quantity} '
         new_order.order_code = f''.join(choices(string.digits, k=4))
+        if new_order.delivery_type == 'Курьером':
+            new_order.price += 100
         new_order.save()
 
         if new_order.payment == 'online':
