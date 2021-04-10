@@ -68,7 +68,8 @@ def create_hash(cart, data):
             pass
 
 
-    total_summ = f"{item.get('id')+ item.get('category').get('id') + selected_size + weight}-{a_i_summ}-{b_i_summ}" #+ units
+    # total_summ = f"{item.get('id')+ item.get('category').get('id') + selected_size + weight}-{a_i_summ}-{b_i_summ}" #+ units
+    total_summ = f"{item.get('id')+ selected_size + weight}-{a_i_summ}-{b_i_summ}" #+ units
 
     return f'{session_id}_{total_summ}{code}'
 
@@ -79,6 +80,8 @@ def add_to_cart(cart,data):
 
     is_added = False
     is_created = False
+
+    print (data)
 
     item = data.get('item')
     selected_size = data.get('selected_size')

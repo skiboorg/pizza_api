@@ -48,6 +48,8 @@ class CafeAddress(models.Model):
 
 class Category(models.Model):
     order_num = models.IntegerField('Порядок вывода', default=100)
+    city = models.ManyToManyField(City, verbose_name='Категория доступна в городах',
+                                  blank=True, db_index=True)
     name = models.CharField('Название категории', max_length=255, blank=True, null=True)
     name_slug = models.CharField(max_length=255, blank=True, null=True, editable=False)
     is_pizza = models.BooleanField('Это пицца?', default=False)

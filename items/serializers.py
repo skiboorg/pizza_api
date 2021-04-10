@@ -18,10 +18,23 @@ class CitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ItemPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPrice
+        fields = [
+            'city',
+            'old_price',
+            'price',
+            'price_33',
+        ]
+
+
 class CategoryItemSerializer(serializers.ModelSerializer):
     base_ingridients = serializers.SerializerMethodField()
     is_pizza = serializers.SerializerMethodField()
+    is_meat = serializers.SerializerMethodField()
     kbgu = serializers.SerializerMethodField()
+    prices = ItemPriceSerializer(many=True, required=False, read_only=True)
     class Meta:
         model = Item
         # fields = '__all__'
@@ -53,6 +66,12 @@ class CategoryItemSerializer(serializers.ModelSerializer):
     def get_is_pizza(self, obj):
         return obj.category.is_pizza
 
+
+    def get_is_meat(self, obj):
+        return obj.category.is_meat
+
+
+
     def get_kbgu(self, obj):
         if obj.callories > 0:
             return f'{obj.callories}/{obj.fat}/{obj.belki}/{obj.uglevod}'
@@ -64,6 +83,8 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+
 
 
 class BaseIngridientSerializer(serializers.ModelSerializer):
@@ -94,30 +115,23 @@ class AdditionalIngridientSerializer(serializers.ModelSerializer):
         model = AdditionalIngridient
         fields = '__all__'
 
-
-class ItemPriceSerializer(serializers.ModelSerializer):
+class ShortCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = ItemPrice
-        fields = [
-            'city',
-            'old_price',
-            'price',
-            'price_33',
-        ]
+        model = Category
+        fields = '__all__'
 
 
 class SimpleItemSerializer(serializers.ModelSerializer):
     prices = ItemPriceSerializer(many=True, required=False, read_only=True)
-    category = CategorySerializer(many=False, required=False, read_only=True)
+    category = ShortCategorySerializer(many=False, required=False, read_only=True)
 
     class Meta:
         model = Item
         fields = '__all__'
 
-class ShortCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
+
+
+
 
 class ShortItemSerializer(serializers.ModelSerializer):
     category = ShortCategorySerializer(many=False, required=False, read_only=True)
