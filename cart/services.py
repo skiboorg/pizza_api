@@ -225,32 +225,32 @@ def calculate_total_cart_price(cart):
 
     roll_price = 0
 
-    for i in all_cart_items:
-
-        if i.item.category.id == 4:
-            roll_price+=i.price
-
-    print(roll_price)
-
-    if roll_price >= 2000:
-        gift = Item.objects.get(is_gift=True)
-        item_in = False
-        for i in all_cart_items:
-            if i.item == gift:
-                print('gift in')
-                item_in = True
-                break
-        if not item_in:
-            new_item = CartItem.objects.create(item=gift,price=0,units=1,city_id=1,price_per_unit=0,quantity=1,code=uuid.uuid4())
-            cart.items.add(new_item)
-            print('gift created')
-
-        print('more2000')
-    else:
-        gift = Item.objects.get(is_gift=True)
-        for i in all_cart_items:
-            if i.item == gift:
-                i.delete()
-                cart.items.remove(i)
-        print('less2000')
+    # for i in all_cart_items:
+    #
+    #     if i.item.category.id == 4:
+    #         roll_price+=i.price
+    #
+    # print(roll_price)
+    #
+    # if roll_price >= 2000:
+    #     gift = Item.objects.get(is_gift=True)
+    #     item_in = False
+    #     for i in all_cart_items:
+    #         if i.item == gift:
+    #             print('gift in')
+    #             item_in = True
+    #             break
+    #     if not item_in:
+    #         new_item = CartItem.objects.create(item=gift,price=0,units=1,city_id=1,price_per_unit=0,quantity=1,code=uuid.uuid4())
+    #         cart.items.add(new_item)
+    #         print('gift created')
+    #
+    #     print('more2000')
+    # else:
+    #     gift = Item.objects.get(is_gift=True)
+    #     for i in all_cart_items:
+    #         if i.item == gift:
+    #             i.delete()
+    #             cart.items.remove(i)
+    #     print('less2000')
 

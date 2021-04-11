@@ -130,14 +130,40 @@ class SimpleItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
+class RecommendedItemSerializer(serializers.ModelSerializer):
+    prices = ItemPriceSerializer(many=True, required=False, read_only=True)
+    class Meta:
+        model = Item
+        exclude = [
+            'category',
+            'additional_ingridients',
+            'base_ingridients',
+            'discount',
+            'created_at',
+            'is_new',
+            'buys',
+            'code',
+            'weight_33',
+            'city',
+            'callories',
+            'fat',
+            'belki',
+            'uglevod',
+            'unit_name',
+            'min_unit',
+            'weight',
+            'is_recommended',
+            'is_for_meat',
+            'is_gift',
+            'is_active',
+            'order_num',
+        ]
 
 
 class ShortItemSerializer(serializers.ModelSerializer):
     category = ShortCategorySerializer(many=False, required=False, read_only=True)
     base_ingridients = serializers.SerializerMethodField()
     prices = ItemPriceSerializer(many=True, required=False, read_only=True)
-
     class Meta:
         model = Item
         exclude = ['additional_ingridients','discount','created_at','is_new','buys','code','weight_33','city']

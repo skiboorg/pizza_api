@@ -43,6 +43,16 @@ class GetBanners(generics.ListAPIView):
         return Banners.objects.filter(is_active=True)
 
 
+class GetRecommendedItems(generics.ListAPIView):
+    serializer_class = RecommendedItemSerializer
+    def get_queryset(self):
+        return Item.objects.filter(city=self.request.query_params.get('city_id'), is_recommended=True, is_active=True)
+
+class GetRecommendedItemsForMeat(generics.ListAPIView):
+    serializer_class = RecommendedItemSerializer
+    def get_queryset(self):
+        return Item.objects.filter(city=self.request.query_params.get('city_id'), is_for_meat=True, is_active=True)
+
 class GetItemsByID(generics.RetrieveAPIView):
     serializer_class = FullItemSerializer
     queryset = Item.objects.filter()
@@ -50,8 +60,8 @@ class GetItemsByID(generics.RetrieveAPIView):
 
 class GetCategories(generics.ListAPIView):
     serializer_class = CategorySerializer
+
     def get_queryset(self):
-        self.request.session['city_id'] = self.request.query_params.get('city_id')
         return Category.objects.filter(city=self.request.query_params.get('city_id'))
 
 
