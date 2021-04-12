@@ -3,7 +3,9 @@ from . import views
 
 urlpatterns = [
     path('set_discount', views.SetDiscount.as_view()),
+    path('set_pizza_discount', views.SetPizzaDiscount.as_view()),
     path('remove_discount', views.RemoveDiscount.as_view()),
+    path('remove_pizza_discount', views.RemovePizzaDiscount.as_view()),
     path('get_cities', views.GetCities.as_view()),
     path('get_categories', views.GetCategories.as_view()),
     path('get_banners', views.GetBanners.as_view()),

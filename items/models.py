@@ -217,6 +217,7 @@ class ItemPrice(models.Model):
                              db_index=True, related_name='prices')
 
     old_price = models.IntegerField( default=0)
+    old_price_33 = models.IntegerField( default=0)
     price = models.IntegerField('Цена (если пицца то для размера 28см)', blank=False, null=True)
     price_33 = models.IntegerField('Цена для пиццы 33см', default=0)
 

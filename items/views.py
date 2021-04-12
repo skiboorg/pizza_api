@@ -8,6 +8,43 @@ from .models import *
 from user.models import Guest
 
 
+class SetPizzaDiscount(APIView):
+    def get(self,request):
+        items = Item.objects.filter(category_id=1)
+        x=0
+        for item in items:
+            if not item.is_gift:
+                item_price = ItemPrice.objects.get(city_id=1,item=item)
+                if item_price.old_price == 0:
+
+                    item_price.old_price = item_price.price
+                    item_price.old_price_33 = item_price.price_33
+
+                    item_price.price = int(item_price.price - item_price.price * 30 /100)
+                    item_price.price_33 = int(item_price.price_33 - item_price.price_33 * 30 /100)
+                    item_price.save()
+                    x+=1
+        return Response({'Изменено товаров':x}, status=200)
+
+
+class RemovePizzaDiscount(APIView):
+    def get(self, request):
+        items = Item.objects.filter(category_id=1)
+        x = 0
+        for item in items:
+            if not item.is_gift:
+                item_price = ItemPrice.objects.get(city_id=1, item=item)
+                if item_price.old_price > 0:
+                    item_price.price = item_price.old_price
+                    item_price.price_33 = item_price.old_price_33
+                    item_price.old_price = 0
+                    item_price.old_price_33 = 0
+                    item_price.save()
+                    x += 1
+        return Response({'Изменено товаров': x}, status=200)
+
+
+
 class SetDiscount(APIView):
     def get(self,request):
         items = Item.objects.filter(category_id=4)
@@ -36,6 +73,7 @@ class RemoveDiscount(APIView):
                     item_price.save()
                     x += 1
         return Response({'Изменено товаров': x}, status=200)
+
 class GetBanners(generics.ListAPIView):
     serializer_class = BannerSerializer
 
