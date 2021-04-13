@@ -43,11 +43,10 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Заказ клиента : '
-        # if self.client:
-        #     return f'Заказ клиента : {self.client.id} '
-        # else:
-        #     return f'Заказ гостя : {self.guest.id} '
+        if self.client:
+            return f'{self.created_at} |  Заказ клиента на сумму: {self.price}'
+        else:
+            return f'{self.created_at} | Заказ гостя на сумму: {self.price}'
 
     class Meta:
         verbose_name = "Заказ"

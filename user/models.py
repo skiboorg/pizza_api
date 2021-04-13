@@ -51,6 +51,9 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    def __str__(self):
+        return f'Аккаунт. ID {self.id}, Дата регистрации: {self.date_joined}'
+
 
 class Guest(models.Model):
     session = models.CharField('Ключ сессии', max_length=255, blank=True, null=True)

@@ -176,8 +176,9 @@ class ShortItemSerializer(serializers.ModelSerializer):
         return val[:-2]
 
 
+# CategorySerializer > ShortCategorySerializer
 class FullItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=False, required=False, read_only=True)
+    category = ShortCategorySerializer(many=False, required=False, read_only=True)
     base_ingridients = BaseIngridientSerializer(many=True, required=False, read_only=True)
     additional_ingridients = AdditionalIngridientSerializer(many=True, required=False, read_only=True)
     prices = ItemPriceSerializer(many=True, required=False, read_only=True)
