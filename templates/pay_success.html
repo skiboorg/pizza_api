@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <title>Pay_success</title>
 </head>
-<body style="display: flex;align-items: center;justify-content: center;width: 100vw;height: 100vh">
+<body style="text-transform: uppercase;display: flex;align-items: center;justify-content: center;flex-direction:column;width: 100vw;height: 100vh">
 
-<p style="font-family: sans-serif;
+<p style="text-transform: uppercase;font-family: sans-serif;
     font-size: 16px;
     font-weight: bold;">Заказ успешно оплачен. Спасибо</p>
-
+<br>
+<p style="font-family: sans-serif;
+    font-size: 16px;
+    color: red;
+    font-weight: bold;">Номер заказа {{ payment.order.order_code }}</p>
+<br>
+<p style="text-transform: uppercase;font-size: 12px; color: #1a1a1a">Это окно можно закрывать ;)</p>
 </body>
 </html>
