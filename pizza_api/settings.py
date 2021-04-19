@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = '%1m7*9h+3z20=w7*ya0#w(0*lgap3fuano906rhfyb(&fqt9xr'
 
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 DEBUG = True
 CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ['*']
