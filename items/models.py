@@ -182,10 +182,11 @@ class Item(models.Model):
     belki = models.IntegerField('Белки', default=0)
     uglevod = models.IntegerField('Углеводы', default=0)
 
-    is_recommended = models.BooleanField('Рекомендуемый товар?', default=False)
-    is_for_meat = models.BooleanField('Рекомендуемый товар для шашлыка?', default=False)
+    is_recommended = models.BooleanField('Рекомендуемый товар?', default=False, db_index=True)
+    is_for_meat = models.BooleanField('Рекомендуемый товар для шашлыка?', default=False, db_index=True)
     is_new = models.BooleanField('Товар новинка ?', default=False, db_index=True)
     is_gift = models.BooleanField('Товар подарок ?', default=False, db_index=True)
+
     is_active = models.BooleanField('Отображать ?', default=True, db_index=True)
 
     buys = models.IntegerField(default=0, editable=False)
