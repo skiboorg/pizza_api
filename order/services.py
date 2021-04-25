@@ -21,7 +21,7 @@ def generate_pdf(order,cart):
                 item_price = item_prices.price_33
             else:
                 item_price = item_prices.price
-            item += f'Пицца - {i.item.name} {i.quantity}шт {i.selected_size}см {i.quantity * item_price}руб '
+            item += f'Пицца - {i.item.name} {i.quantity}шт {28 if i.selected_size== 22 else 33}см {i.quantity * item_price}руб '
         else:
             item_price = ItemPrice.objects.get(city=i.city, item=i.item)
             if i.item.category.is_meat:
