@@ -136,3 +136,21 @@ class NewOrder(APIView):
         else:
             generate_pdf(new_order,cart)
             return Response({'code': new_order.order_code}, status=200)
+
+
+class Stats(APIView):
+    def get(self,request):
+        orders = Order.objects.all()
+        phones = []
+        total_summ = 0
+        for order in orders:
+            total_summ += order.price
+            phones.append(order.phone)
+        total_phones = len(list(dict.fromkeys(phones)))
+        return Response({
+            'Всего заказов':orders.count(),
+            'Общая сумма заказов':total_summ,
+            'Средний чек':total_summ / orders.count(),
+            'Уникальных номеров':total_phones,
+
+        },status=200)
