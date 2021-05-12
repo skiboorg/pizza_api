@@ -203,7 +203,7 @@ class Item(models.Model):
         super(Item, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.name} {self.min_unit} {self.unit_name} | {self.base_ingridients.first().name}'
+        return f'{self.name} {self.min_unit} {self.unit_name}'
 
     class Meta:
         ordering = ('order_num',)
