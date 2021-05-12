@@ -41,7 +41,7 @@ class NewOrder(APIView):
         session_id = data.get('session_id')
         source = data.get('source')
         order_data = data.get('data')
-        print(data)
+        print(data.get('promo'))
         cart = check_if_cart_exists(request, session_id)
         new_order = Order.objects.create(
             cart=cart,
@@ -55,7 +55,7 @@ class NewOrder(APIView):
             comment=order_data.get('comment'),
             date = order_data.get('date'),
             time=order_data.get('time'),
-            price=cart.total_price - data.get('bonuses') - data.get('promo'),
+            price=cart.total_price - data.get('bonuses'),
             bonuses=data.get('bonuses'),
             cafe_address=order_data.get('cafe_address'),
             promo=data.get('promo'),
@@ -99,6 +99,8 @@ class NewOrder(APIView):
         for i in all_cart_souses:
             new_order.order_content += f'{i.item.name} X {i.quantity} '
         new_order.order_code = f''.join(choices(string.digits, k=4))
+        if data.get('promo') > 0:
+            new_order.price = new_order.price - (new_order.price * data.get('promo') / 100)
         if new_order.delivery_type == 'Курьером':
             new_order.price += 100
         new_order.save()
