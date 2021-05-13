@@ -29,8 +29,10 @@ class UserManager(BaseUserManager):
 
 class Promo(models.Model):
 
-    code = models.CharField(max_length=50, blank=True, null=True)
-    discount = models.IntegerField(default=0)
+    code = models.CharField('Промокод',max_length=50, blank=True, null=True)
+    discount = models.IntegerField('% скидки',default=0)
+    uses = models.IntegerField('Кол-во использований',default=0)
+
 
 class User(AbstractUser):
 

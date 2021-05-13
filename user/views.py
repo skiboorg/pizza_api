@@ -89,9 +89,14 @@ class UsePromo(APIView):
         code = request.data.get('code')
         try:
             promo = Promo.objects.get(code=code)
-            user.promo = promo
-            user.save()
-            return Response({'status': True,'discount':promo.discount}, status=200)
+            # user.promo = promo
+            # user.save()
+            if promo.uses >= 1:
+                promo.uses -= 1
+                promo.save()
+                return Response({'status': True,'discount':promo.discount}, status=200)
+            else:
+                return Response({'status': False}, status=200)
         except Promo.DoesNotExist:
             return Response({'status':False},status=200)
 
