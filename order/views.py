@@ -149,10 +149,15 @@ class Stats(APIView):
             total_summ += order.price
             phones.append(order.phone)
         total_phones = len(list(dict.fromkeys(phones)))
+        pp = ''
+        for p in list(dict.fromkeys(phones)):
+            pp += f'{p},'
+
         return Response({
             'Всего заказов':orders.count(),
             'Общая сумма заказов':total_summ,
             'Средний чек':total_summ / orders.count(),
             'Уникальных номеров':total_phones,
+            'Телефоны':pp,
 
         },status=200)
