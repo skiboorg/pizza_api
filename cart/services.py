@@ -223,34 +223,36 @@ def calculate_total_cart_price(cart):
         cart.total_bonuses += i.bonuses
     cart.save()
 
-    roll_price = 0
+    items_price = 0
 
-    # for i in all_cart_items:
-    #
-    #     if i.item.category.id == 4:
-    #         roll_price+=i.price
-    #
-    # print(roll_price)
-    #
-    # if roll_price >= 2000:
-    #     gift = Item.objects.get(is_gift=True)
-    #     item_in = False
-    #     for i in all_cart_items:
-    #         if i.item == gift:
-    #             print('gift in')
-    #             item_in = True
-    #             break
-    #     if not item_in:
-    #         new_item = CartItem.objects.create(item=gift,price=0,units=1,city_id=1,price_per_unit=0,quantity=1,code=uuid.uuid4())
-    #         cart.items.add(new_item)
-    #         print('gift created')
-    #
-    #     print('more2000')
-    # else:
-    #     gift = Item.objects.get(is_gift=True)
-    #     for i in all_cart_items:
-    #         if i.item == gift:
-    #             i.delete()
-    #             cart.items.remove(i)
-    #     print('less2000')
+    for i in all_cart_items:
+
+        if i.item.category.id == 2:
+            items_price+=i.price
+
+    print(items_price)
+
+    if items_price >= 2400:
+        gift = Item.objects.filter(is_gift=True)
+        for g in gift:
+            item_in = False
+            for i in all_cart_items:
+                if i.item == g:
+                    print('gift in')
+                    item_in = True
+                    break
+            if not item_in:
+                new_item = CartItem.objects.create(item=g,price=0,units=1,city_id=1,price_per_unit=0,quantity=1,code=uuid.uuid4())
+                cart.items.add(new_item)
+                print('gift created')
+
+            print('more2000')
+    else:
+        gift = Item.objects.filter(is_gift=True)
+        for g in gift:
+            for i in all_cart_items:
+                if i.item == g:
+                    i.delete()
+                    cart.items.remove(i)
+            print('less2000')
 
