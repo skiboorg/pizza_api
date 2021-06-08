@@ -227,12 +227,12 @@ def calculate_total_cart_price(cart):
 
     for i in all_cart_items:
 
-        if i.item.category.id == 2:
+        if i.item.category.id == 1:
             items_price+=i.price
 
     print(items_price)
 
-    if items_price >= 2400:
+    if items_price >= 1100:
         gift = Item.objects.filter(is_gift=True)
         for g in gift:
             item_in = False
