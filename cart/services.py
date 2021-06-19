@@ -38,11 +38,13 @@ def create_hash(cart, data):
     user = cart.client
     guest = cart.guest
 
-    if user:
-        session_id = user.session
-    if guest:
-        session_id = guest.session
-
+    # if user:
+    #     session_id = user.session
+    # if guest:
+    #     session_id = guest.session
+    #
+    # print(data['session_id'])
+    session_id = data['session_id']
     item = data.get('item')
     selected_size = data.get('selected_size')
     base_ingridients = item.get('base_ingridients')
