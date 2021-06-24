@@ -67,7 +67,8 @@ class ChangePassword(APIView):
     def post(self, request):
         print(request.data)
         user = User.objects.get(phone = request.data['phone'])
-        result = send_sms(user.phone, True, 'Ваш новый пароль : ')
+        result = send_sms(user.phone, True, '"Мясо на углях" пароль: ')
+        print(result)
         user.set_password(result['code'])
         user.save()
         return Response(status=200)
