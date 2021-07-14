@@ -6,3 +6,4 @@ pytils
 django-ckeditor
 django
 python-pdf
+pyfcm

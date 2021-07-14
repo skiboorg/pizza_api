@@ -3,10 +3,49 @@ from pytils.translit import slugify
 from django.utils.safestring import mark_safe
 from random import choices
 import string
+from ckeditor_uploader.fields import RichTextUploadingField
 
+
+
+
+class City(models.Model):
+    name = models.CharField('Город', max_length=255, blank=False, null=True)
+    info = models.CharField('Информация о достаке',max_length=255, blank=True, null=True)
+    is_main = models.BooleanField('Это город по умолчанию?', default=False)
+    order_email = models.CharField('Email для отправки заказа', max_length=255, blank=False, null=True)
+    order_phone = models.CharField('Телефон для отправки заказа', max_length=255, blank=False, null=True)
+    domain = models.CharField('Домен', max_length=255, blank=False, null=True, default='')
+    sber_login = models.CharField('Логин сбре', max_length=255, blank=False, null=True, default='')
+    sber_pass = models.CharField('Пароль сбер', max_length=255, blank=False, null=True, default='')
+    sber_url = models.CharField('Сбер URL', max_length=255, blank=False, null=True, default='')
+
+    main_phone = models.CharField('Телефон в шапке', max_length=255, blank=False, null=True)
+    contacts_text = RichTextUploadingField('Тект для страницы контакты', blank=True, null=True)
+    payment_text = RichTextUploadingField('Тект для опллаты', blank=True, null=True)
+    delivery_times = models.CharField('ДОСТАВКА РАБОТАЕТ', max_length=255, blank=False, null=True)
+    delivery_from_price = models.CharField('СУММА ЗАКАЗА', max_length=255, blank=False, null=True)
+    delivery_price = models.CharField('ЦЕНА ДОСТАВКИ', max_length=255, blank=False, null=True)
+    delivery_time = models.CharField('ВРЕМЯ ДОСТАВКИ', max_length=255, blank=False, null=True)
+    about_image = models.ImageField('Главное изображение на странице о нас', upload_to='city/', blank=True)
+    about_kitchen = models.ImageField('Изображение кухни на странице о нас', upload_to='city/', blank=True)
+    is_show_peoples = models.BooleanField('Отображать поваров', default=False)
+    about_p9_text = models.TextField('Текст пункта 9', null= True, blank=True)
+    vk_link = models.CharField('Vk', max_length=255, blank=True, null=True)
+    inst_link = models.CharField('Instagram', max_length=255, blank=True, null=True)
+    policy_text = RichTextUploadingField('Тект политики', blank=True, null=True)
+    rules_text = RichTextUploadingField('Тект правил', blank=True, null=True)
+
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = "Город"
+        verbose_name_plural = "Города"
 
 class Banners(models.Model):
     order_num = models.IntegerField("Номер по порядку", default=100)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Город')
     image = models.ImageField('Изображение', upload_to='banners/', blank=False)
     is_active = models.BooleanField('Показывать баннер?', default=True)
 
@@ -19,24 +58,12 @@ class Banners(models.Model):
         verbose_name_plural = "Баннер"
 
 
-class City(models.Model):
-    name = models.CharField('Город', max_length=255, blank=False, null=True)
-    info = models.CharField('Информация о достаке',max_length=255, blank=True, null=True)
-    is_main = models.BooleanField('Это город по умолчанию?', default=False)
-
-    def __str__(self):
-        return f'{self.name}'
-
-    class Meta:
-        verbose_name = "Город"
-        verbose_name_plural = "Города"
-
-
 class CafeAddress(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE, blank=False, null=True,
                              verbose_name='Город', related_name='adresses')
     address = models.TextField('Адрес кафе', max_length=255, blank=True, null=True)
     coordinates = models.CharField('Координаты', max_length=255, blank=False, null=True)
+    phone = models.CharField('Телефон', max_length=255, blank=False, null=True)
 
     def __str__(self):
         return f'{self.city.name} - {self.address}'

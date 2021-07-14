@@ -51,6 +51,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             User._meta.pk.name,
             "password",
             "phone",
+            "n_id",
         )
 
     def validate(self, attrs):

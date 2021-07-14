@@ -39,12 +39,14 @@ class NewOrder(APIView):
     def post(self,request):
         data = request.data
         session_id = data.get('session_id')
+        city_id = data.get('city_id')
         source = data.get('source')
         order_data = data.get('data')
         print(data.get('promo'))
         cart = check_if_cart_exists(request, session_id)
         new_order = Order.objects.create(
             cart=cart,
+            city_id=city_id,
             name=order_data.get('name'),
             phone=order_data.get('phone'),
             payment=order_data.get('payment'),
@@ -65,7 +67,10 @@ class NewOrder(APIView):
             flat=order_data.get('flat'),
             podezd=order_data.get('podezd'),
             code=order_data.get('code'),
-            floor=order_data.get('floor')
+            floor=order_data.get('floor'),
+            source=source,
+
+
         )
         user = cart.client
         guest = cart.guest
@@ -108,14 +113,15 @@ class NewOrder(APIView):
         if new_order.payment == 'online':
             new_order.is_payed = False
             new_order.save()
-            response = requests.get('https://securepayments.sberbank.ru/payment/rest/register.do?'
+
+            response = requests.get(f'{new_order.city.sber_url}?'
                                     f'amount={new_order.price}00&'
                                     'currency=643&'
                                     'language=ru&'
                                     f'orderNumber={new_order.order_code}&'
                                     f'description=Оплата заказа {new_order.order_code}.&'
-                                    f'password={settings.SBER_API_PASSWORD}&'
-                                    f'userName={settings.SBER_API_LOGIN}&'
+                                    f'password={new_order.city.sber_pass}&'
+                                    f'userName={new_order.city.sber_login}&'
                                     f'returnUrl={settings.SBER_API_RETURN_URL+source}&'
                                     f'failUrl={settings.SBER_API_FAIL_URL+source}&'
                                     'pageView=DESKTOP&sessionTimeoutSecs=1200')

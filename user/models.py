@@ -47,6 +47,7 @@ class User(AbstractUser):
     profile_ok = models.BooleanField(default=False)
     birthday = models.DateField('Д/Р', blank=True, null=True)
     bonuses = models.IntegerField(default=0)
+    notification_id = models.CharField('ID для сообщений', max_length=255, blank=True, null=True, unique=True)
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = []

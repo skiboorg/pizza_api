@@ -80,7 +80,7 @@ class GetBanners(generics.ListAPIView):
     serializer_class = BannerSerializer
 
     def get_queryset(self):
-        return Banners.objects.filter(is_active=True)
+        return Banners.objects.filter(is_active=True, city=self.request.query_params.get('city_id'))
 
     @method_decorator(cache_page(60 * 60 * 2))
     def dispatch(self, *args, **kwargs):
@@ -131,6 +131,11 @@ class GetCategories(generics.ListAPIView):
 class GetCities(generics.ListAPIView):
     serializer_class = CitySerializer
     queryset = City.objects.all()
+
+class GetCity(generics.RetrieveAPIView):
+    serializer_class = CitySerializer
+    def get_object(self):
+        return City.objects.get(domain=self.request.query_params.get('domain'))
 
 class GetItemsByCity(generics.ListAPIView):
     serializer_class = ShortItemSerializer

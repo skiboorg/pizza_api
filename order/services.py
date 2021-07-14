@@ -5,6 +5,7 @@ from items.models import ItemPrice,SoucePrice,AdditionalIngridientPrice
 import settings
 from django.core.mail import send_mail,EmailMessage
 from cart.services import erase_cart
+from pyfcm import FCMNotification
 
 def generate_pdf(order,cart):
     items = []
@@ -81,12 +82,36 @@ def generate_pdf(order,cart):
     #     f.write(pdf)
     # send_email(filename,order)
 
-    send_mail('Новый заказ', None, settings.MAIL_TO, (settings.MAIL_TO,),
+    send_mail('Новый заказ', None, settings.MAIL_TO, (order.city.order_email,),
               fail_silently=False, html_message=html)
     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
-    url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones=+79129140946&mes=Новый заказ №{order.order_code}'
     response1 = requests.post(url)
-    response2 = requests.post(url1)
+    if order.user:
+        if order.user.notification_id:
+
+            push_service = FCMNotification(api_key=settings.FCM_API_KEY)
+
+            registration_id = order.user.notification_id
+            message_title = "Ваш заказ"
+            message_body = f'Номер заказа {order.order_code}'
+
+            data_message = {
+
+            }
+
+            result = push_service.notify_single_device(registration_id=registration_id,
+                                                       sound='Default',
+                                                       message_title=message_title,
+                                                       message_body=message_body,
+                                                       data_message=data_message,
+                                                       )
+            print(result)
+        else:
+            url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.city.order_phone}&mes=Новый заказ №{order.order_code}'
+            response2 = requests.post(url1)
+    else:
+        url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.city.order_phone}&mes=Новый заказ №{order.order_code}'
+        response2 = requests.post(url1)
 
     erase_cart(cart)
 
