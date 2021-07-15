@@ -86,12 +86,12 @@ def generate_pdf(order,cart):
               fail_silently=False, html_message=html)
     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
     response1 = requests.post(url)
-    if order.user:
-        if order.user.notification_id:
+    if order.client:
+        if order.client.notification_id:
 
             push_service = FCMNotification(api_key=settings.FCM_API_KEY)
 
-            registration_id = order.user.notification_id
+            registration_id = order.client.notification_id
             message_title = "Ваш заказ"
             message_body = f'Номер заказа {order.order_code}'
 
