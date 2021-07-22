@@ -84,8 +84,8 @@ def generate_pdf(order,cart):
 
     send_mail('Новый заказ', None, settings.MAIL_TO, (order.city.order_email,),
               fail_silently=False, html_message=html)
-    # url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
-    # response1 = requests.post(url)
+    url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.city.order_phone}&mes=Новый заказ №{order.order_code}'
+    response2 = requests.post(url1)
     if order.client:
         if order.client.notification_id:
 
@@ -107,11 +107,11 @@ def generate_pdf(order,cart):
                                                        )
             print(result)
         else:
-            url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.city.order_phone}&mes=Новый заказ №{order.order_code}'
-            response2 = requests.post(url1)
+            url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+            response1 = requests.post(url)
     else:
-        url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.city.order_phone}&mes=Новый заказ №{order.order_code}'
-        response2 = requests.post(url1)
+        url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+        response1 = requests.post(url)
 
     erase_cart(cart)
 
