@@ -63,6 +63,13 @@ class DeleteAddress(generics.DestroyAPIView):
     queryset = UserAddress.objects.filter()
 
 
+class SetNId(APIView):
+    def post(self, request):
+        print(request.data)
+        request.user.notification_id = request.data.get('n_id')
+        request.user.save()
+        return Response(status=200)
+
 class ChangePassword(APIView):
     def post(self, request):
         print(request.data)

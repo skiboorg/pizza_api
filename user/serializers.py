@@ -33,7 +33,8 @@ class UserSerializer(serializers.ModelSerializer):
             'phone',
             'bonuses',
             'promo',
-            'addresses'
+            'addresses',
+            'notification_id'
         ]
 
 
@@ -51,7 +52,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             User._meta.pk.name,
             "password",
             "phone",
-            "n_id",
+            "notification_id",
         )
 
     def validate(self, attrs):

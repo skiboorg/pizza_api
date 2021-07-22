@@ -12,5 +12,6 @@ urlpatterns = [
     path('use_promo', views.UsePromo.as_view()),
     path('send_code_sms', views.SendCodeSMS.as_view()),
     path('change_password', views.ChangePassword.as_view()),
+    path('set_n_id', views.SetNId.as_view()),
 
 ]

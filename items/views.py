@@ -82,7 +82,7 @@ class GetBanners(generics.ListAPIView):
     def get_queryset(self):
         return Banners.objects.filter(is_active=True, city=self.request.query_params.get('city_id'))
 
-    @method_decorator(cache_page(60 * 60 * 2))
+    # @method_decorator(cache_page(60 * 60 * 2))
     def dispatch(self, *args, **kwargs):
         return super(GetBanners, self).dispatch(*args, **kwargs)
 
@@ -92,7 +92,7 @@ class GetRecommendedItems(generics.ListAPIView):
     def get_queryset(self):
         return Item.objects.filter(city=self.request.query_params.get('city_id'), is_recommended=True, is_active=True)
 
-    @method_decorator(cache_page(60 * 60 * 2))
+    # @method_decorator(cache_page(60 * 60 * 2))
     def dispatch(self, *args, **kwargs):
         return super(GetRecommendedItems, self).dispatch(*args, **kwargs)
 
@@ -103,7 +103,7 @@ class GetRecommendedItemsForMeat(generics.ListAPIView):
     def get_queryset(self):
         return Item.objects.filter(city=self.request.query_params.get('city_id'), is_for_meat=True, is_active=True)
 
-    @method_decorator(cache_page(60 * 60 * 2))
+    # @method_decorator(cache_page(60 * 60 * 2))
     def dispatch(self, *args, **kwargs):
         return super(GetRecommendedItemsForMeat, self).dispatch(*args, **kwargs)
 
@@ -151,7 +151,7 @@ class GetSousesByCity(generics.ListAPIView):
     def get_queryset(self):
         return Souce.objects.filter(city=self.request.query_params.get('city_id'))
 
-    @method_decorator(cache_page(60 * 60 * 2))
+    # @method_decorator(cache_page(60 * 60 * 2))
     def dispatch(self, *args, **kwargs):
         return super(GetSousesByCity, self).dispatch(*args, **kwargs)
 
