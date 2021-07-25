@@ -50,7 +50,7 @@ def sendPush(mode, title, text, n_id=None, url=None, city=None):
     }
     if mode == 'single':
         result = push_service.notify_single_device(registration_id=registration_id,
-                                                   sound='Default',
+                                                   sound='default',
                                                    message_title=message_title,
                                                    message_body=message_body,
                                                    )
@@ -67,7 +67,7 @@ def sendPush(mode, title, text, n_id=None, url=None, city=None):
         print(registration_ids)
 
         result = push_service.notify_multiple_devices(registration_ids=registration_ids,
-                                                   sound='Default',
+                                                   sound='default',
                                                    message_title=message_title,
                                                    message_body=message_body,
                                                    data_message=data_message,
