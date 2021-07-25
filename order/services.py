@@ -5,7 +5,7 @@ from items.models import ItemPrice,SoucePrice,AdditionalIngridientPrice
 import settings
 from django.core.mail import send_mail,EmailMessage
 from cart.services import erase_cart
-from pyfcm import FCMNotification
+from user.services import sendPush
 
 def generate_pdf(order,cart):
     items = []
@@ -88,24 +88,7 @@ def generate_pdf(order,cart):
     response2 = requests.post(url1)
     if order.client:
         if order.client.notification_id:
-
-            push_service = FCMNotification(api_key=settings.FCM_API_KEY)
-
-            registration_id = order.client.notification_id
-            message_title = "Ваш заказ"
-            message_body = f'Номер заказа {order.order_code}'
-
-            data_message = {
-
-            }
-
-            result = push_service.notify_single_device(registration_id=registration_id,
-                                                       sound='Default',
-                                                       message_title=message_title,
-                                                       message_body=message_body,
-                                                       data_message=data_message,
-                                                       )
-            print(result)
+            sendPush(mode='single', title='Ваш заказ', text=f'Номер заказа {order.order_code}', n_id=order.client.notification_id)
         else:
             url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
             response1 = requests.post(url)

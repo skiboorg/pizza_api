@@ -66,6 +66,7 @@ class DeleteAddress(generics.DestroyAPIView):
 class SetNId(APIView):
     def post(self, request):
         print(request.data)
+        request.user.city_id = request.data.get('city_id')
         request.user.notification_id = request.data.get('n_id')
         request.user.save()
         return Response(status=200)
@@ -86,7 +87,7 @@ class SendCodeSMS(APIView):
     def post(self, request):
         print(request.data)
         phone = request.data.get('phone')
-        result = send_sms(phone,True)
+        result = send_sms(phone,True,text='Мясо на углях. Код подтверждения:')
 
         return Response(result,status=200)
 

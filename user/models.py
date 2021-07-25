@@ -39,6 +39,7 @@ class User(AbstractUser):
     username = None
     first_name = None
     last_name = None
+    city = models.ForeignKey('items.City', on_delete=models.SET_NULL, null=True, blank=True)
     promo = models.ForeignKey(Promo, on_delete=models.CASCADE, blank=True, null=True)
     session = models.CharField('Ключ сессии', max_length=255, blank=True, null=True)
     email = models.EmailField('Эл. почта',blank=True,null=True, unique=True)

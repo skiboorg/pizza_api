@@ -2,6 +2,8 @@ from random import choices
 import string
 import requests
 import settings
+from .models import User
+from pyfcm import FCMNotification
 
 def create_random_string(digits=False, num=4):
     if not digits:
@@ -34,3 +36,42 @@ def send_sms(phone, is_code=False, text=''):
     if 'ERROR' not in response.text:
         result = {'code':code}
     return result
+
+
+def sendPush(mode, title, text, n_id=None, url=None, city=None):
+    push_service = FCMNotification(api_key=settings.FCM_API_KEY)
+
+    registration_id = n_id
+    message_title = title
+    message_body = text
+
+    data_message = {
+        "url": url
+    }
+    if mode == 'single':
+        result = push_service.notify_single_device(registration_id=registration_id,
+                                                   sound='Default',
+                                                   message_title=message_title,
+                                                   message_body=message_body,
+                                                   )
+        print(result)
+    if mode == 'promo':
+        registration_ids = []
+        if city:
+            all_users = User.objects.filter(city=city)
+        else:
+            all_users = User.objects.all()
+        for user in all_users:
+            if user.notification_id:
+                registration_ids.append(user.notification_id)
+        print(registration_ids)
+
+        result = push_service.notify_multiple_devices(registration_ids=registration_ids,
+                                                   sound='Default',
+                                                   message_title=message_title,
+                                                   message_body=message_body,
+                                                   data_message=data_message,
+                                                   )
+        print(result)
+
+
