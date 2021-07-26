@@ -233,7 +233,7 @@ class Item(models.Model):
         return f'{self.name} {self.min_unit} {self.unit_name}'
 
     class Meta:
-        ordering = ('order_num',)
+        ordering = ('order_num','is_gift')
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
 

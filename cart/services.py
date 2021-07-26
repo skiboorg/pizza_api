@@ -2,6 +2,7 @@ from user.models import Guest
 from .models import *
 from items.models import Item
 from items.models import City, ItemPrice, AdditionalIngridientPrice
+from promotion.models import Promotion
 import settings
 import uuid
 
@@ -208,53 +209,95 @@ def erase_cart(cart):
     cart.total_bonuses = 0
     cart.save()
 
+
+def addPromoItem(items,all_cart_items,cart,city_id):
+    for g in items:
+        item_in = False
+        for i in all_cart_items:
+            if i.item == g:
+                print('gift in')
+                item_in = True
+                break
+        if not item_in:
+            new_item = CartItem.objects.create(item=g,price=0,units=1,city_id=city_id,price_per_unit=0,quantity=1,code=uuid.uuid4())
+            cart.items.add(new_item)
+            print('gift created')
+        print('more2000')
+
+def removePromoItem(items,all_cart_items,cart):
+    for g in items:
+        for i in all_cart_items:
+            if i.item == g:
+                i.delete()
+                cart.items.remove(i)
+
+
+
 def calculate_total_cart_price(cart):
     all_cart_items = cart.items.all()
-    all_cart_constructors = cart.pizza_constructors.all()
+    # all_cart_constructors = cart.pizza_constructors.all()
     all_cart_souses = cart.souces.all()
     cart.total_price = 0
     cart.total_bonuses = 0
+    city = None
     for i in all_cart_items:
         cart.total_price += i.price
         cart.total_bonuses += i.bonuses
-    for i in all_cart_constructors:
-        cart.total_price += i.price
-        cart.total_bonuses += i.bonuses
+        city = i.city
+    # for i in all_cart_constructors:
+    #     cart.total_price += i.price
+    #     cart.total_bonuses += i.bonuses
     for i in all_cart_souses:
         cart.total_price += i.price
         cart.total_bonuses += i.bonuses
     cart.save()
 
-    items_price = 0
+    promos = Promotion.objects.filter(city=city, discount__gt=0)
+    print(promos)
 
-    for i in all_cart_items:
+    if promos:
+        for promo in promos:
+            items_price = 0
 
-        if i.item.category.id == 1:
-            items_price+=i.price
-
-    print(items_price)
-
-    if items_price >= 1100:
-        gift = Item.objects.filter(is_gift=True)
-        for g in gift:
-            item_in = False
             for i in all_cart_items:
-                if i.item == g:
-                    print('gift in')
-                    item_in = True
-                    break
-            if not item_in:
-                new_item = CartItem.objects.create(item=g,price=0,units=1,city_id=1,price_per_unit=0,quantity=1,code=uuid.uuid4())
-                cart.items.add(new_item)
-                print('gift created')
 
-            print('more2000')
-    else:
-        gift = Item.objects.filter(is_gift=True)
-        for g in gift:
-            for i in all_cart_items:
-                if i.item == g:
-                    i.delete()
-                    cart.items.remove(i)
-            print('less2000')
+                if i.item.category.id == promo.category.id:
+                    items_price += i.price
+
+            print(items_price)
+            items = promo.items.all()
+
+            if items_price > promo.cart_summ:
+                print('more')
+                addPromoItem(items,all_cart_items,cart,city.id)
+            else:
+                print('less')
+                removePromoItem(items,all_cart_items,cart)
+    #
+    #
+    #
+    #
+    # if items_price >= 1100:
+    #     gift = Item.objects.filter(is_gift=True)
+    #     for g in gift:
+    #         item_in = False
+    #         for i in all_cart_items:
+    #             if i.item == g:
+    #                 print('gift in')
+    #                 item_in = True
+    #                 break
+    #         if not item_in:
+    #             new_item = CartItem.objects.create(item=g,price=0,units=1,city_id=1,price_per_unit=0,quantity=1,code=uuid.uuid4())
+    #             cart.items.add(new_item)
+    #             print('gift created')
+    #
+    #         print('more2000')
+    # else:
+    #     gift = Item.objects.filter(is_gift=True)
+    #     for g in gift:
+    #         for i in all_cart_items:
+    #             if i.item == g:
+    #                 i.delete()
+    #                 cart.items.remove(i)
+    #         print('less2000')
 
