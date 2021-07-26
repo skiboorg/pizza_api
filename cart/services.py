@@ -251,8 +251,9 @@ def calculate_total_cart_price(cart):
         cart.total_price += i.price
         cart.total_bonuses += i.bonuses
     cart.save()
+    cart_price_without_discount = cart.total_price
 
-    promos = Promotion.objects.filter(city=city, discount__gt=0)
+    promos = Promotion.objects.filter(city=city, cart_summ__gt=0)
     print(promos)
 
     if promos:
@@ -267,12 +268,19 @@ def calculate_total_cart_price(cart):
             print(items_price)
             items = promo.items.all()
 
-            if items_price > promo.cart_summ:
-                print('more')
-                addPromoItem(items,all_cart_items,cart,city.id)
+            if items:
+                if items_price > promo.cart_summ:
+                    print('more')
+                    addPromoItem(items,all_cart_items,cart,city.id)
+                else:
+                    print('less')
+                    removePromoItem(items,all_cart_items,cart)
             else:
-                print('less')
-                removePromoItem(items,all_cart_items,cart)
+                if items_price > promo.cart_summ:
+                    cart.total_price = int(cart.total_price - cart.total_price * promo.discount / 100)
+                else:
+                    cart.total_price = cart_price_without_discount
+                cart.save()
     #
     #
     #
