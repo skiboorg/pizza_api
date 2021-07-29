@@ -73,7 +73,8 @@ def generate_pdf(order,cart):
                                 'comment': order.comment,
                                 'items':items,
                                 'constructors':constructors,
-                                'souses':souses
+                                'souses':souses,
+                                'is_apply_promo':order.cart.is_apply_promo,
 
                             })
     # pdf = pydf.generate_pdf(html)
