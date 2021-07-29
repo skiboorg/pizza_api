@@ -42,6 +42,7 @@ class Order(models.Model):
 
     order_content = models.TextField(blank=True,null=True,default='')
     is_payed = models.BooleanField(default=True)
+    is_apply_promo = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -67,4 +68,6 @@ class Payment(models.Model):
     status = models.BooleanField(default=False)
     amount = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
 

@@ -272,14 +272,18 @@ def calculate_total_cart_price(cart):
                 if items_price > promo.cart_summ:
                     print('more')
                     addPromoItem(items,all_cart_items,cart,city.id)
+                    cart.is_apply_promo = True
                 else:
                     print('less')
                     removePromoItem(items,all_cart_items,cart)
+                    cart.is_apply_promo = False
             else:
                 if items_price > promo.cart_summ:
                     cart.total_price = int(cart.total_price - cart.total_price * promo.discount / 100)
+                    cart.is_apply_promo = True
                 else:
                     cart.total_price = cart_price_without_discount
+                    cart.is_apply_promo = False
                 cart.save()
     #
     #
