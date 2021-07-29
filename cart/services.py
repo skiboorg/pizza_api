@@ -207,6 +207,7 @@ def erase_cart(cart):
         i.delete()
     cart.total_price = 0
     cart.total_bonuses = 0
+    cart.is_apply_promo = False
     cart.save()
 
 
