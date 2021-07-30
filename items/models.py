@@ -35,6 +35,9 @@ class City(models.Model):
     policy_text = RichTextUploadingField('Тект политики', blank=True, null=True)
     rules_text = RichTextUploadingField('Тект правил', blank=True, null=True)
 
+    metrika_id = models.CharField('ID Metrika', max_length=255, blank=True, null=True)
+    call_tracker_id = models.CharField('ID Calltrack', max_length=255, blank=True, null=True)
+
 
     def __str__(self):
         return f'{self.name}'
