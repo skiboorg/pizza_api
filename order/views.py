@@ -38,6 +38,7 @@ def pay_success(request):
 class NewOrder(APIView):
     def post(self,request):
         data = request.data
+        print(data.get('data'))
         session_id = data.get('session_id')
         city_id = data.get('city_id')
         source = data.get('source')
@@ -55,7 +56,7 @@ class NewOrder(APIView):
             no_cashback=order_data.get('no_cashback'),
             persons = cart.persons,
             comment=order_data.get('comment'),
-            date = order_data.get('date'),
+            date = order_data.get('date').replace('/','-'),
             time=order_data.get('time'),
             price=cart.total_price - data.get('bonuses'),
             bonuses=data.get('bonuses'),

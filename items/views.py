@@ -121,8 +121,8 @@ class GetCategories(generics.ListAPIView):
         return Category.objects.filter(city=self.request.query_params.get('city_id'))
 
     #@method_decorator(cache_page(60 * 60 * 2))
-    def dispatch(self, *args, **kwargs):
-        return super(GetCategories, self).dispatch(*args, **kwargs)
+    # def dispatch(self, *args, **kwargs):
+    #     return super(GetCategories, self).dispatch(*args, **kwargs)
 
 
 
