@@ -262,8 +262,10 @@ def calculate_total_cart_price(cart):
             items_price = 0
 
             for i in all_cart_items:
-
-                if i.item.category.id == promo.category.id:
+                if promo.category:
+                    if i.item.category.id == promo.category.id:
+                        items_price += i.price
+                else:
                     items_price += i.price
 
             print(items_price)
