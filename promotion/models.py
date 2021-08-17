@@ -8,6 +8,7 @@ class Promotion(models.Model):
     name = models.CharField('Название акции', max_length=255, blank=True, null=True)
     image = models.ImageField('Изображение', upload_to='promotions/', blank=True)
     text = models.TextField('Текст', blank=True)
+    is_first_order = models.BooleanField('Скидка на первый заказ?', default=False)
     is_active = models.BooleanField('Отображать?', default=False)
     is_need_notify = models.BooleanField('Сделать расслку пушей после сохранения акции?', default=False)
     discount = models.IntegerField('Скидка в корзине',default=0)
@@ -27,3 +28,8 @@ class Promotion(models.Model):
             sendPush(mode='promo', title='Новая акция', text=self.name, url='/promo', city=self.city)
             self.is_need_notify = False
         super(Promotion, self).save(*args, **kwargs)
+
+class PromotionUse(models.Model):
+    promotion = models.ForeignKey(Promotion,on_delete=models.CASCADE,blank=True,null=True)
+    user = models.ForeignKey('user.User',on_delete=models.SET_NULL,blank=True,null=True)
+    is_saved = models.BooleanField(default=False)

@@ -12,6 +12,7 @@ import requests
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.shortcuts import render,HttpResponseRedirect
 from .services import generate_pdf
+from promotion.models import *
 import settings
 
 @xframe_options_exempt
@@ -45,6 +46,15 @@ class NewOrder(APIView):
         order_data = data.get('data')
         print(data.get('promo'))
         cart = check_if_cart_exists(request, session_id)
+
+        try:
+            curr_promo = Promotion.objects.get(is_first_order=True)
+            promo_is_use = PromotionUse.objects.get(promotion=curr_promo, user=cart.client, is_saved=False)
+            promo_is_use.is_saved = True
+            promo_is_use.save()
+        except:
+            pass
+
         new_order = Order.objects.create(
             cart=cart,
             city_id=city_id,

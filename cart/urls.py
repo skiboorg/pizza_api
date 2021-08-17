@@ -18,4 +18,5 @@ urlpatterns = [
     path('delete_cart_souse', views.DeleteCartSouse.as_view()),
     path('add_souse_quantity', views.AddSouseQuantity.as_view()),
     path('remove_souse_quantity', views.RemoveSouseQuantity.as_view()),
+    path('remove_cart', views.RemoveCart.as_view()),
 ]

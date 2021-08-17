@@ -238,6 +238,25 @@ class DeleteCartSouse(APIView):
         calculate_total_cart_price(cart)
         return Response(status=200)
 
+
+class RemoveCart(APIView):
+    def get(self, request):
+        items = Cart.objects.all()
+        items.delete()
+        items = Guest.objects.all()
+        items.delete()
+        items = CartConstructor.objects.all()
+        items.delete()
+        items = CartSouce.objects.all()
+        items.delete()
+        items = CartItemBaseIngrigient.objects.all()
+        items.delete()
+        items = CartItemAdditionalIngrigient.objects.all()
+        items.delete()
+        items = CartItem.objects.all()
+        items.delete()
+        return Response(status=200)
+
 class RemoveSouseQuantity(APIView):
     def post(self, request):
         data = request.data

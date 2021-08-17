@@ -2,7 +2,7 @@ from user.models import Guest
 from .models import *
 from items.models import Item
 from items.models import City, ItemPrice, AdditionalIngridientPrice
-from promotion.models import Promotion
+from promotion.models import *
 import settings
 import uuid
 
@@ -256,9 +256,20 @@ def calculate_total_cart_price(cart):
 
     promos = Promotion.objects.filter(city=city, cart_summ__gt=0)
     print(promos)
+    print(cart)
 
     if promos:
         for promo in promos:
+            if promo.is_first_order and cart.client:
+                promo_is_use, created = PromotionUse.objects.get_or_create(promotion=promo,
+                                                                           user=cart.client,
+                                                                            defaults={'is_saved':False})
+                if promo_is_use.is_saved:
+                    return
+            if promo.is_first_order and not cart.client:
+                return
+
+
             items_price = 0
 
             for i in all_cart_items:
