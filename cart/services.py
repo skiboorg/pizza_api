@@ -55,7 +55,8 @@ def create_hash(cart, data):
     is_meat = data.get('is_meat')
     b_i_summ=''
     a_i_summ=''
-    code =item.get('code')
+
+    item_obj=Item.objects.get(id=item.get('id'))
 
     if not is_meat:
         # added
@@ -74,7 +75,7 @@ def create_hash(cart, data):
     # total_summ = f"{item.get('id')+ item.get('category').get('id') + selected_size + weight}-{a_i_summ}-{b_i_summ}" #+ units
     total_summ = f"{item.get('id')+ selected_size + weight}-{a_i_summ}-{b_i_summ}" #+ units
 
-    return f'{session_id}_{total_summ}{code}'
+    return f'{session_id}_{total_summ}{item_obj.code}'
 
 
 def add_to_cart(cart,data):
