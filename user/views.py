@@ -1,6 +1,8 @@
 import json
 import uuid
-
+import requests
+from random import choices
+import string
 from django.http import HttpResponseRedirect
 
 
@@ -13,7 +15,7 @@ from .serializers import *
 from .models import *
 from rest_framework import generics
 
-
+import settings
 
 
 class UserUpdate(APIView):
@@ -83,12 +85,26 @@ class ChangePassword(APIView):
 
 
 
-class SendCodeSMS(APIView):
+class ComfirmPhoneStepOne(APIView):
     def post(self, request):
         print(request.data)
         phone = request.data.get('phone')
-        result = send_sms(phone,True,text='Мясо на углях. Код подтверждения:')
+        result = {'id': False}
+        url = f'https://smsc.ru/sys/send.php?' \
+              f'login={settings.SMS_LOGIN}' \
+              f'&psw={settings.SMS_PASSWORD}' \
+              f'&phones={phone}' \
+              f'&mes=code' \
+              f'&call=1' \
+              f'$fmt=3'
+        response = requests.post(url)
+        print('send sms', response.text)
 
+
+        if 'ERROR' not in response.text:
+            print('send sms', response.text)
+            code = response.text.split(',')[2].split('-')[1].lstrip()
+            result = {'id': code}
         return Response(result,status=200)
 
 
