@@ -84,28 +84,36 @@ class ChangePassword(APIView):
         return Response(status=200)
 
 
-
-class ComfirmPhoneStepOne(APIView):
+class SendCodeSMS(APIView):
     def post(self, request):
         print(request.data)
         phone = request.data.get('phone')
-        result = {'id': False}
-        url = f'https://smsc.ru/sys/send.php?' \
-              f'login={settings.SMS_LOGIN}' \
-              f'&psw={settings.SMS_PASSWORD}' \
-              f'&phones={phone}' \
-              f'&mes=code' \
-              f'&call=1' \
-              f'$fmt=3'
-        response = requests.post(url)
-        print('send sms', response.text)
 
+        result = send_sms(phone,True,text='Мясо на углях. Код подтверждения:')
 
-        if 'ERROR' not in response.text:
-            print('send sms', response.text)
-            code = response.text.split(',')[2].split('-')[1].lstrip()
-            result = {'id': code}
         return Response(result,status=200)
+
+# class ComfirmPhoneStepOne(APIView):
+#     def post(self, request):
+#         print(request.data)
+#         phone = request.data.get('phone')
+#         result = {'id': False}
+#         url = f'https://smsc.ru/sys/send.php?' \
+#               f'login={settings.SMS_LOGIN}' \
+#               f'&psw={settings.SMS_PASSWORD}' \
+#               f'&phones={phone}' \
+#               f'&mes=code' \
+#               f'&call=1' \
+#               f'$fmt=3'
+#         response = requests.post(url)
+#         print('send sms', response.text)
+#
+#
+#         if 'ERROR' not in response.text:
+#             print('send sms', response.text)
+#             code = response.text.split(',')[2].split('-')[1].lstrip()
+#             result = {'id': code}
+#         return Response(result,status=200)
 
 
 class UsePromo(APIView):

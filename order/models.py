@@ -9,6 +9,7 @@ class OrderItem(models.Model):
 class Order(models.Model):
     cart = models.ForeignKey('cart.Cart', on_delete=models.SET_NULL,null=True,blank=True)
     city = models.ForeignKey('items.City', on_delete=models.SET_NULL,null=True,blank=True)
+    courier = models.ForeignKey('courier.Courier', on_delete=models.SET_NULL,null=True,blank=True)
     order_code = models.CharField(max_length=255, null=True, blank=True)
     client = models.ForeignKey('user.User', blank=True, null=True, default=None, on_delete=models.CASCADE,
                                verbose_name='Заказ клиента')
@@ -41,15 +42,18 @@ class Order(models.Model):
     floor = models.CharField(max_length=50, blank=True, null=True)
 
     order_content = models.TextField(blank=True,null=True,default='')
-    is_payed = models.BooleanField(default=True)
+    is_payed = models.BooleanField(default=False)
     is_apply_promo = models.BooleanField(default=False)
+    is_delivered = models.BooleanField(default=False)
+    is_delivery_in_progress = models.BooleanField(default=False)
+    is_assing = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         if self.client:
-            return f'{self.created_at} |  Заказ клиента на сумму: {self.price}'
+            return f'№{self.order_code} | {self.created_at} |  Заказ клиента на сумму: {self.price}'
         else:
-            return f'{self.created_at} | Заказ гостя на сумму: {self.price}'
+            return f'№{self.order_code} | {self.created_at} | Заказ гостя на сумму: {self.price}'
 
     class Meta:
         verbose_name = "Заказ"

@@ -38,8 +38,12 @@ def send_sms(phone, is_code=False, text=''):
     return result
 
 
-def sendPush(mode, title, text, n_id=None, url=None, city=None):
-    push_service = FCMNotification(api_key=settings.FCM_API_KEY)
+def sendPush(send_to,mode, title, text, n_id=None, url=None, city=None):
+    push_service = ''
+    if send_to == 'client':
+        push_service = FCMNotification(api_key=settings.FCM_API_KEY)
+    if send_to == 'courier':
+        push_service = FCMNotification(api_key=settings.COURIER_FCM_API_KEY)
 
     registration_id = n_id
     message_title = title

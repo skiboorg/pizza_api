@@ -2,7 +2,7 @@ import json
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-#from .serializers import *
+from .serializers import *
 from .models import *
 from cart.services import *
 from user.models import Guest
@@ -14,6 +14,8 @@ from django.shortcuts import render,HttpResponseRedirect
 from .services import generate_pdf
 from promotion.models import *
 import settings
+import datetime
+from django.utils import timezone
 
 @xframe_options_exempt
 def pay_fail(request):
@@ -94,26 +96,27 @@ class NewOrder(APIView):
         if guest:
             new_order.guest = guest
 
-        all_cart_items = cart.items.all()
-        all_cart_constructors = cart.pizza_constructors.all()
-        all_cart_souses = cart.souces.all()
+        # all_cart_items = cart.items.all()
+        # all_cart_constructors = cart.pizza_constructors.all()
+        # all_cart_souses = cart.souces.all()
+        #
+        # for i in all_cart_items:
+        #     new_order.order_content += f'{i.item.name} X {i.quantity} ('
+        #     for b_i in i.base_ingridients.all():
+        #         if not b_i.is_removed:
+        #             new_order.order_content += f'{b_i.item.name} '
+        #     for a_i in i.additional_ingridients.all():
+        #         if a_i.is_added:
+        #             new_order.order_content += f'{a_i.item.name} '
+        #     new_order.order_content += f')\n '
+        # for i in all_cart_constructors:
+        #     text = ''
+        #     for i_p in i.items.all():
+        #         text += f'{i_p.name} '
+        #     new_order.order_content += f'Конструктор {text} X {i.quantity} \n'
+        # for i in all_cart_souses:
+        #     new_order.order_content += f'{i.item.name} X {i.quantity} '
 
-        for i in all_cart_items:
-            new_order.order_content += f'{i.item.name} X {i.quantity} ('
-            for b_i in i.base_ingridients.all():
-                if not b_i.is_removed:
-                    new_order.order_content += f'{b_i.item.name} '
-            for a_i in i.additional_ingridients.all():
-                if a_i.is_added:
-                    new_order.order_content += f'{a_i.item.name} '
-            new_order.order_content += f')\n '
-        for i in all_cart_constructors:
-            text = ''
-            for i_p in i.items.all():
-                text += f'{i_p.name} '
-            new_order.order_content += f'Конструктор {text} X {i.quantity} \n'
-        for i in all_cart_souses:
-            new_order.order_content += f'{i.item.name} X {i.quantity} '
         new_order.order_code = f''.join(choices(string.digits, k=4))
         if data.get('promo') > 0:
             new_order.price = new_order.price - (new_order.price * data.get('promo') / 100)
@@ -122,8 +125,8 @@ class NewOrder(APIView):
         new_order.save()
 
         if new_order.payment == 'online':
-            new_order.is_payed = False
-            new_order.save()
+            # new_order.is_payed = False
+            # new_order.save()
 
             response = requests.get(f'{new_order.city.sber_url}?'
                                     f'amount={new_order.price}00&'
@@ -156,6 +159,22 @@ class NewOrder(APIView):
             generate_pdf(new_order,cart)
             return Response({'code': new_order.order_code}, status=200)
 
+
+class GetUserOrders(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    def get_queryset(self):
+        return Order.objects.filter(client=self.request.user).order_by('-created_at')
+
+class GetOrders(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    def get_queryset(self):
+        # yesterday = datetime.date.today() - datetime.timedelta(days=1)
+        # print(yesterday)
+        dt = timezone.now()
+        start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+        return Order.objects.filter(city_id=self.request.query_params.get('city_id'),
+                                    delivery_type='Курьером',
+                                    date=start).order_by('-created_at')
 
 class Stats(APIView):
     def get(self,request):

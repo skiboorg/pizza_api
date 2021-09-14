@@ -34,7 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
             'bonuses',
             'promo',
             'addresses',
-            'notification_id'
+            'notification_id',
+            'is_staff'
         ]
 
 

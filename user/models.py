@@ -64,6 +64,7 @@ class Guest(models.Model):
     email = models.EmailField('Эл. почта', blank=True, null=True)
     fio = models.CharField('ФИО', max_length=50, blank=True, null=True)
     phone = models.CharField('Телефон', max_length=50, blank=True, null=True)
+    ip = models.CharField('ip', max_length=50, blank=True, null=True)
 
 
 

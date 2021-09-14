@@ -7,11 +7,15 @@ import settings
 import uuid
 
 
-def check_if_guest_exists(session_id):
-    guest, created = Guest.objects.get_or_create(session=session_id)
+def check_if_guest_exists(session_id,request):
+    guest, created = Guest.objects.get_or_create(ip=request.META.get('REMOTE_ADDR'),
+                                                 defaults={'session':session_id}
+                                                 )
     if created:
         print('guest created')
     else:
+        guest.session = session_id
+        guest.save()
         print('guest already created')
     return guest
 
@@ -22,7 +26,7 @@ def check_if_cart_exists(request, session_id):
     if request.user.is_authenticated:
         user = request.user
     else:
-        guest = check_if_guest_exists(session_id)
+        guest = check_if_guest_exists(session_id,request)
 
     if user:
         cart, created = Cart.objects.get_or_create(client=user)
