@@ -17,7 +17,13 @@ class CourierSerializer(serializers.ModelSerializer):
         model = Courier
         fields = '__all__'
 
+class OrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderStatus
+        fields = '__all__'
+
 class OrderSerializer(serializers.ModelSerializer):
+    status = OrderStatusSerializer(many=False,required=False,read_only=True)
     courier = CourierSerializer(many=False,required=False,read_only=True)
     city = CitySerializer(many=False,required=False,read_only=True)
     class Meta:

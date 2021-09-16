@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from items.serializers import *
-from order.models import Order
+from order.models import *
 from items.models import City
 
 
@@ -14,7 +14,13 @@ class CitySerializer(serializers.ModelSerializer):
             'name'
         ]
 
+class OrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderStatus
+        fields = '__all__'
+
 class OrderSerializer(serializers.ModelSerializer):
+    status = OrderStatusSerializer(many=False,required=False,read_only=True)
     city = CitySerializer(many=False, required=False, read_only=True)
     class Meta:
         model = Order

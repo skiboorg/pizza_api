@@ -88,6 +88,7 @@ def generate_pdf(order,cart):
     for i in souses:
         order.order_content += f'{i}<br>'
     order.save()
+    # ----------------- uncomment
 
     send_mail('Новый заказ', None, settings.MAIL_TO, (order.city.order_email,),
               fail_silently=False, html_message=html)
@@ -102,6 +103,7 @@ def generate_pdf(order,cart):
     else:
         url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
         response1 = requests.post(url)
+     #-----------------
 
     erase_cart(cart)
 

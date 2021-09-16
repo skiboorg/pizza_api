@@ -172,6 +172,9 @@ class GetOrders(generics.ListAPIView):
         # print(yesterday)
         dt = timezone.now()
         start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+        print(Order.objects.filter(city_id=self.request.query_params.get('city_id'),
+                                    delivery_type='Курьером',
+                                    date=start).order_by('-created_at'))
         return Order.objects.filter(city_id=self.request.query_params.get('city_id'),
                                     delivery_type='Курьером',
                                     date=start).order_by('-created_at')

@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from .serializers import *
 from .models import *
-from order.models import Order
+from order.models import Order,OrderStatus
 from user.services import sendPush
 
 class GetCourier(generics.RetrieveAPIView):
@@ -39,13 +39,16 @@ class DeliveryComplete(APIView):
         print(request.data)
         order = Order.objects.get(id=request.data.get('order_id'))
         courier = Courier.objects.get(id=request.data.get('courier_id'))
+        current_courirer_order = CourierOrder.objects.get(order=order)
+        current_courirer_order.delete()
         courier.have_orders_in_delivery = False
-        order.is_delivered = True
-        order.is_delivery_in_progress = False
-        order.is_assing = False
+        status = OrderStatus.objects.get(is_delivered=True)
+        order.status = status
         order.is_payed = True
         order.save()
         courier.save()
+        if order.client and order.client.notification_id:
+            sendPush('client', 'single','Обновление статуса заказа',f'Заказ №{order.order_code} доставлен',n_id=order.client.notification_id)
         return Response(status=200)
 
 class GetCoordinates(APIView):
@@ -68,7 +71,8 @@ class OrderInDelivery(APIView):
         print(request.data)
         order = Order.objects.get(id=request.data.get('order_id'))
         courier = Courier.objects.get(id=request.data.get('courier_id'))
-        order.is_delivery_in_progress = True
+        status = OrderStatus.objects.get(is_delivery_in_progress=True)
+        order.status = status
         order.save()
         courier.have_orders_in_delivery = True
         courier.save()

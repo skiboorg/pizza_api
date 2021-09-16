@@ -10,6 +10,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 class City(models.Model):
     name = models.CharField('Город', max_length=255, blank=False, null=True)
+    modalText = RichTextUploadingField('Тект модалки', blank=True, null=True)
     info = models.CharField('Информация о достаке',max_length=255, blank=True, null=True)
     is_main = models.BooleanField('Это город по умолчанию?', default=False)
     order_email = models.CharField('Email для отправки заказа', max_length=255, blank=False, null=True)
