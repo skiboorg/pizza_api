@@ -5,7 +5,7 @@ from items.models import City, ItemPrice, AdditionalIngridientPrice
 from promotion.models import *
 import settings
 import uuid
-
+from order.services import print_log
 
 # def check_if_guest_exists(session_id,request):
 #     guest, created = Guest.objects.get_or_create(ip=request.META.get('REMOTE_ADDR'),
@@ -23,6 +23,7 @@ def check_if_guest_exists(session_id):
     guest, created = Guest.objects.get_or_create(session=session_id)
     if created:
         print('guest created')
+        print_log(f'guest created | id {guest.id}')
     else:
         print('guest already created')
     return guest
@@ -44,7 +45,9 @@ def check_if_cart_exists(request, session_id):
 
     if created:
         print('new cart created')
+        print_log(f'new cart created | {cart}')
     else:
+        print_log(f'cart already created | {cart}')
         print('cart already created')
     return cart
 
@@ -111,7 +114,11 @@ def add_to_cart(cart,data):
     item_id = item.get('id')
 
     item_code = create_hash(cart, data)
-
+    print_log(f'''
+    add to cart {cart} 
+    item : {item}
+    hash : {item_code}
+    ''')
     city = City.objects.get(id=city_id)
     item_prices = ItemPrice.objects.get(city=city, item_id=item_id)
     if selected_size == 33:
@@ -122,7 +129,7 @@ def add_to_cart(cart,data):
     print('item_price',item_price)
     print('selected_size',selected_size)
 
-
+    cart_item = None
     if item:
         if user:
             print('adding for user')
@@ -268,7 +275,7 @@ def calculate_total_cart_price(cart):
     cart.save()
     cart_price_without_discount = cart.total_price
 
-    promos = Promotion.objects.filter(city=city, cart_summ__gt=0)
+    promos = Promotion.objects.filter(city=city, cart_summ__gt=0, is_active=True)
     print(promos)
     print(cart)
 
@@ -312,6 +319,7 @@ def calculate_total_cart_price(cart):
                 else:
                     cart.total_price = cart_price_without_discount
                     cart.is_apply_promo = False
+                print_log(f'promo % apply | id {cart}')
                 cart.save()
     #
     #

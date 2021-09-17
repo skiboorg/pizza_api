@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from items.models import ItemPrice,SoucePrice,AdditionalIngridientPrice
 import settings
 from django.core.mail import send_mail,EmailMessage
-from cart.services import erase_cart
+
 from user.services import sendPush
 import logging
 
@@ -16,6 +16,7 @@ def print_log(text):
     logger.info('---------------------------------------------')
 
 def generate_pdf(order,cart):
+    from cart.services import erase_cart
     items = []
     constructors = []
     souses = []
@@ -112,7 +113,9 @@ def generate_pdf(order,cart):
     else:
         url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
         response1 = requests.post(url)
+
      #-----------------
+
     print_log(f'order {order.order_code} erase cart')
     erase_cart(cart)
 
