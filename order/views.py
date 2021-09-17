@@ -11,7 +11,7 @@ import string
 import requests
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.shortcuts import render,HttpResponseRedirect
-from .services import generate_pdf
+from .services import *
 from promotion.models import *
 import settings
 import datetime
@@ -41,13 +41,19 @@ def pay_success(request):
 class NewOrder(APIView):
     def post(self,request):
         data = request.data
-        print(data.get('data'))
         session_id = data.get('session_id')
+        cart = check_if_cart_exists(request, session_id)
+        print_log(f'order start | cart {cart}')
+        print_log(f'data {data.get("data")}')
+        print_log(f'source {data.get("source")}')
+        print_log(f'cart {cart.items.all()}')
+
+        print(data.get('data'))
         city_id = data.get('city_id')
         source = data.get('source')
         order_data = data.get('data')
         print(data.get('promo'))
-        cart = check_if_cart_exists(request, session_id)
+
 
         try:
             curr_promo = Promotion.objects.get(is_first_order=True)
@@ -127,7 +133,7 @@ class NewOrder(APIView):
         if new_order.payment == 'online':
             # new_order.is_payed = False
             # new_order.save()
-
+            print_log(f'order go payment | order_code {new_order.order_code}')
             response = requests.get(f'{new_order.city.sber_url}?'
                                     f'amount={new_order.price}00&'
                                     'currency=643&'
@@ -156,6 +162,8 @@ class NewOrder(APIView):
                     },
                     status=200)
         else:
+            print_log(f'order go generate email | order_code {new_order.order_code}')
+            print_log(f'cart {cart.items.all()}')
             generate_pdf(new_order,cart)
             return Response({'code': new_order.order_code}, status=200)
 

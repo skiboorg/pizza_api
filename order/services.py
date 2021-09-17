@@ -6,6 +6,14 @@ import settings
 from django.core.mail import send_mail,EmailMessage
 from cart.services import erase_cart
 from user.services import sendPush
+import logging
+
+logger = logging.getLogger('django', )
+
+def print_log(text):
+    logger.info('--------------------------------------------')
+    logger.info(f'{text}')
+    logger.info('---------------------------------------------')
 
 def generate_pdf(order,cart):
     items = []
@@ -88,6 +96,7 @@ def generate_pdf(order,cart):
     for i in souses:
         order.order_content += f'{i}<br>'
     order.save()
+    print_log(f'save order {order.order_code} items {order.order_content}')
     # ----------------- uncomment
 
     send_mail('Новый заказ', None, settings.MAIL_TO, (order.city.order_email,),
@@ -104,7 +113,7 @@ def generate_pdf(order,cart):
         url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
         response1 = requests.post(url)
      #-----------------
-
+    print_log(f'order {order.order_code} erase cart')
     erase_cart(cart)
 
 
