@@ -68,6 +68,7 @@ class CafeAddress(models.Model):
     address = models.TextField('Адрес кафе', max_length=255, blank=True, null=True)
     coordinates = models.CharField('Координаты', max_length=255, blank=False, null=True)
     phone = models.CharField('Телефон', max_length=255, blank=False, null=True)
+    order_email = models.CharField('Email для отправки заказа', max_length=255, blank=False, null=True)
 
     def __str__(self):
         return f'{self.city.name} - {self.address}'

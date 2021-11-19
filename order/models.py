@@ -55,6 +55,7 @@ class Order(models.Model):
     is_apply_promo = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     is_payed = models.BooleanField(default=False)
+    email = models.CharField(max_length=50, blank=True, null=True)
     def __str__(self):
         if self.client:
             return f'№{self.order_code} | {self.created_at} |  Заказ клиента на сумму: {self.price}'

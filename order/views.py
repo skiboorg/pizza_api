@@ -27,11 +27,13 @@ def pay_success(request):
     source = request.GET.get('source')
     print(source)
     payment = Payment.objects.get(sberId=payment_id)
-    payment.status = True
-    payment.save()
-    payment.order.is_payed = True
-    payment.order.save()
-    generate_pdf(payment.order,payment.order.cart)
+    if not payment.order.is_payed:
+
+        payment.status = True
+        payment.save()
+        payment.order.is_payed = True
+        payment.order.save()
+        generate_pdf(payment.order,payment.order.cart)
     if source=='mobile':
         return render(request, 'pay_success.html', locals())
     else:
@@ -52,7 +54,9 @@ class NewOrder(APIView):
         city_id = data.get('city_id')
         source = data.get('source')
         order_data = data.get('data')
-        print(data.get('promo'))
+        cafe_address = order_data.get('cafe_address')
+        email = cafe_address['order_email']
+
 
 
         try:
@@ -78,7 +82,7 @@ class NewOrder(APIView):
             time=order_data.get('time'),
             price=cart.total_price - data.get('bonuses'),
             bonuses=data.get('bonuses'),
-            cafe_address=order_data.get('cafe_address'),
+            cafe_address=cafe_address['address'],
             promo=data.get('promo'),
             cashback=order_data.get('cashback') if order_data.get('cashback') else 0,
             street=order_data.get('street'),
@@ -88,8 +92,7 @@ class NewOrder(APIView):
             code=order_data.get('code'),
             floor=order_data.get('floor'),
             source=source,
-
-
+            email=email
         )
         user = cart.client
         guest = cart.guest
