@@ -104,15 +104,15 @@ def generate_pdf(order,cart):
               fail_silently=False, html_message=html)
     # url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.city.order_phone}&mes=Новый заказ №{order.order_code}'
     # response2 = requests.post(url1)
-    if order.client:
-        if order.client.notification_id:
-            sendPush('client', mode='single', title='Ваш заказ принят', text=f'Номер заказа {order.order_code}.', n_id=order.client.notification_id)
-        else:
-            url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
-            response1 = requests.post(url)
-    else:
-        url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
-        response1 = requests.post(url)
+    # if order.client:
+    #     if order.client.notification_id:
+    #         sendPush('client', mode='single', title='Ваш заказ принят', text=f'Номер заказа {order.order_code}.', n_id=order.client.notification_id)
+    #     else:
+    #         url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+    #         response1 = requests.post(url)
+    # else:
+    #     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+    #     response1 = requests.post(url)
 
      #-----------------
 

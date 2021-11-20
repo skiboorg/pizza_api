@@ -68,9 +68,12 @@ class DeleteAddress(generics.DestroyAPIView):
 class SetNId(APIView):
     def post(self, request):
         print(request.data)
-        request.user.city_id = request.data.get('city_id')
-        request.user.notification_id = request.data.get('n_id')
-        request.user.save()
+        try:
+            request.user.city_id = request.data.get('city_id')
+            request.user.notification_id = request.data.get('n_id')
+            request.user.save()
+        except:
+            pass
         return Response(status=200)
 
 class ChangePassword(APIView):
