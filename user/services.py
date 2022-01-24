@@ -35,7 +35,7 @@ def send_sms(phone, is_code=False, text=''):
           f'psw={settings.SMS_PASSWORD}&' \
           f'phones={phone}&' \
           f'mes={sms_text}&' \
-          f'sender="kafeMyasoug"'
+          f'sender=kafeMyasoug'
     response = requests.post(url)
     print('send sms', response.text)
     if 'ERROR' not in response.text:
