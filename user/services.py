@@ -27,10 +27,15 @@ def set_user_rating(id,value):
 def send_sms(phone, is_code=False, text=''):
     sms_text = text
     result = {'code':False}
+    code = ''
     if is_code:
         code = ''.join(choices(string.digits, k=4))
         sms_text = text + code
-    url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={phone}&mes={sms_text}'
+    url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
+          f'psw={settings.SMS_PASSWORD}&' \
+          f'phones={phone}&' \
+          f'mes={sms_text}&' \
+          f'sender="kafeMyasoug"'
     response = requests.post(url)
     print('send sms', response.text)
     if 'ERROR' not in response.text:

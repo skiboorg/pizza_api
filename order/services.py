@@ -102,26 +102,43 @@ def generate_pdf(order,cart):
 
     send_mail('Новый заказ', None, settings.MAIL_TO, (order.email,),
               fail_silently=False, html_message=html)
-    # url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.city.order_phone}&mes=Новый заказ №{order.order_code}'
-    # response2 = requests.post(url1)
+
+    url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
+           f'psw={settings.SMS_PASSWORD}&' \
+           f'phones={order.city.order_phone}&' \
+           f'mes=Новый заказ №{order.order_code}&' \
+           f'sender="kafeMyasoug"'
+    response2 = requests.post(url1)
     if order.client:
         if order.client.notification_id:
             sendPush('client', mode='single', title='Ваш заказ принят', text=f'Номер заказа {order.order_code}.', n_id=order.client.notification_id)
         else:
-            url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+            url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
+                  f'psw={settings.SMS_PASSWORD}&' \
+                  f'phones={order.phone}&' \
+                  f'mes=Мясо на углях: Номер заказа {order.order_code}&' \
+                  f'sender="kafeMyasoug"'
             response1 = requests.post(url)
     else:
-        url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+        url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
+              f'psw={settings.SMS_PASSWORD}&' \
+              f'phones={order.phone}&' \
+              f'mes=Мясо на углях: Номер заказа {order.order_code}&' \
+              f'sender="kafeMyasoug"'
         response1 = requests.post(url)
 
-     #-----------------
+     # -----------------
 
     print_log(f'order {order.order_code} erase cart')
     erase_cart(cart)
 
 
 def send_email(filename,order):
-    url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&psw={settings.SMS_PASSWORD}&phones={order.phone}&mes=Мясо на углях: Номер заказа {order.order_code}'
+    url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
+          f'psw={settings.SMS_PASSWORD}&' \
+          f'phones={order.phone}&' \
+          f'mes=Мясо на углях: Номер заказа {order.order_code}&' \
+          f'sender="kafeMyasoug"'
     response = requests.post(url)
     print(response.text)
     mail = EmailMessage('Новый заказ', 'Новый заказ', settings.MAIL_TO, (settings.MAIL_TO,))

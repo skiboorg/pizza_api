@@ -56,6 +56,8 @@ class NewOrder(APIView):
         order_data = data.get('data')
         cafe_address = order_data.get('cafe_address')
         email = cafe_address['order_email']
+        print(email)
+
 
 
 
