@@ -94,7 +94,8 @@ class NewOrder(APIView):
             code=order_data.get('code'),
             floor=order_data.get('floor'),
             source=source,
-            email=email
+            email=email,
+            is_new=True
         )
         user = cart.client
         guest = cart.guest
@@ -185,13 +186,19 @@ class GetOrders(generics.ListAPIView):
         # print(yesterday)
         dt = timezone.now()
         start = dt.replace(hour=0, minute=0, second=0, microsecond=0)
-        print(Order.objects.filter(city_id=self.request.query_params.get('city_id'),
-                                    delivery_type='Курьером',
-                                    date=start).order_by('-created_at'))
+        # print(Order.objects.filter(city_id=self.request.query_params.get('city_id'),
+        #                             delivery_type='Курьером',
+        #                             date=start).order_by('-created_at'))
         return Order.objects.filter(city_id=self.request.query_params.get('city_id'),
-                                    delivery_type='Курьером',
+                                    # delivery_type='Курьером',
                                     date=start).order_by('-created_at')
 
+class SetOrderView(APIView):
+    def get(self, request):
+        order = Order.objects.get(id=self.request.query_params.get('id'))
+        order.is_new = False
+        order.save()
+        return Response(status=200)
 class Stats(APIView):
     def get(self,request):
         orders = Order.objects.all()

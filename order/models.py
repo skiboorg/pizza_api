@@ -55,6 +55,7 @@ class Order(models.Model):
     is_apply_promo = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     is_payed = models.BooleanField(default=False)
+    is_new = models.BooleanField(default=False)
     email = models.CharField(max_length=50, blank=True, null=True)
     def __str__(self):
         if self.client:
