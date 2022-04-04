@@ -116,14 +116,14 @@ def generate_pdf(order,cart):
             url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
                   f'psw={settings.SMS_PASSWORD}&' \
                   f'phones={order.phone}&' \
-                  f'mes=Мясо на углях: Номер заказа {order.order_code} | +7 (3494) 29 24 07 | +7 (3494) 29 25 07&' \
+                  f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
                   f'sender=kafeMyasoug'
             response1 = requests.post(url)
     else:
         url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
               f'psw={settings.SMS_PASSWORD}&' \
               f'phones={order.phone}&' \
-              f'mes=Мясо на углях: Номер заказа {order.order_code} | +7 (3494) 29 24 07 | +7 (3494) 29 25 07&' \
+               f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
               f'sender=kafeMyasoug'
         response1 = requests.post(url)
 
@@ -137,7 +137,7 @@ def send_email(filename,order):
     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
           f'psw={settings.SMS_PASSWORD}&' \
           f'phones={order.phone}&' \
-          f'mes=Мясо на углях: Номер заказа {order.order_code} | +7 (3494) 29 24 07 | +7 (3494) 29 25 07&' \
+           f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
           f'sender=kafeMyasoug'
     response = requests.post(url)
     print(response.text)
