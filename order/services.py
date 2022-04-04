@@ -84,6 +84,7 @@ def generate_pdf(order,cart):
                                 'constructors':constructors,
                                 'souses':souses,
                                 'is_apply_promo':order.cart.is_apply_promo,
+                                'bonuses':order.bonuses,
 
                             })
     # pdf = pydf.generate_pdf(html)
