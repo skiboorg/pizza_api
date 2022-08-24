@@ -7,3 +7,6 @@ django-ckeditor
 django
 python-pdf
 pyfcm
+
+celery
+redis

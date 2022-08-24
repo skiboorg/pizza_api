@@ -7,6 +7,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = '%1m7*9h+3z20=w7*ya0#w(0*lgap3fuano906rhfyb(&fqt9xr'
 
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_SERIALIZER = 'json'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+
+
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 DEBUG = True
 CORS_ORIGIN_ALLOW_ALL = True

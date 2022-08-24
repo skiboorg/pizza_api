@@ -7,7 +7,7 @@ from django.core.mail import send_mail,EmailMessage
 
 from user.services import sendPush
 import logging
-
+from .tasks import send_email
 logger = logging.getLogger('django', )
 
 def print_log(text):
@@ -58,6 +58,34 @@ def generate_pdf(order,cart):
     for i in all_cart_souses:
         item_price = SoucePrice.objects.get(city=i.city, item=i.item)
         souses.append(f'Соус  - {i.item.name} {i.quantity}шт {i.quantity * item_price.price}руб')
+    data = {
+                                'order_code': order.order_code,
+                                'price': order.price,
+                                'persons': order.persons,
+                                'delivery_type': order.delivery_type,
+                                'name': order.name,
+                                'phone': order.phone,
+                                'street': order.street,
+                                'house': order.house,
+                                'flat': order.flat,
+                                'podezd': order.podezd,
+                                'code': order.code,
+                                'floor': order.floor,
+                                'payment': order.payment,
+                                'need_callback': order.need_callback,
+                                'no_cashback': order.no_cashback,
+                                'cashback': order.cashback,
+                                'time': order.time,
+                                'date': order.date,
+                                'cafe_address': order.cafe_address,
+                                'comment': order.comment,
+                                'items':items,
+                                'constructors':constructors,
+                                'souses':souses,
+                                'is_apply_promo':order.cart.is_apply_promo,
+                                'bonuses':order.bonuses,
+
+                            }
     html = render_to_string('order.html',
                             {
                                 'order_code': order.order_code,
@@ -101,8 +129,7 @@ def generate_pdf(order,cart):
     print_log(f'save order {order.order_code} items {order.order_content}')
     # ----------------- uncomment
 
-    send_mail('Новый заказ', None, settings.MAIL_TO, (order.email,),
-              fail_silently=False, html_message=html)
+    send_email.delay('Новый заказ', order.email,'order.html',data)
 
     url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
            f'psw={settings.SMS_PASSWORD}&' \
@@ -134,15 +161,15 @@ def generate_pdf(order,cart):
     erase_cart(cart)
 
 
-def send_email(filename,order):
-    url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
-          f'psw={settings.SMS_PASSWORD}&' \
-          f'phones={order.phone}&' \
-           f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
-          f'sender=kafeMyasoug'
-    response = requests.post(url)
-    print(response.text)
-    mail = EmailMessage('Новый заказ', 'Новый заказ', settings.MAIL_TO, (settings.MAIL_TO,))
-    # mail.attach(file.name, file.read(), file.content_type)
-    mail.attach_file(filename)
-    mail.send()
+# def send_email(filename,order):
+#     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
+#           f'psw={settings.SMS_PASSWORD}&' \
+#           f'phones={order.phone}&' \
+#            f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
+#           f'sender=kafeMyasoug'
+#     response = requests.post(url)
+#     print(response.text)
+#     mail = EmailMessage('Новый заказ', 'Новый заказ', settings.MAIL_TO, (settings.MAIL_TO,))
+#     # mail.attach(file.name, file.read(), file.content_type)
+#     mail.attach_file(filename)
+#     mail.send()
