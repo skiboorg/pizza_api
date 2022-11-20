@@ -15,5 +15,6 @@ urlpatterns = [
     path('get_item_by_id/<int:pk>', views.GetItemsByID.as_view()),
     path('get_recommended_items', views.GetRecommendedItems.as_view()),
     path('get_recommended_items_for_meat', views.GetRecommendedItemsForMeat.as_view()),
+    path('copy_city', views.CopyCity.as_view()),
 
 ]

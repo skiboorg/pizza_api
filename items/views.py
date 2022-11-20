@@ -155,4 +155,75 @@ class GetSousesByCity(generics.ListAPIView):
     def dispatch(self, *args, **kwargs):
         return super(GetSousesByCity, self).dispatch(*args, **kwargs)
 
+class CopyCity(APIView):
+    def get(self,request):
+        target_id = self.request.query_params.get('target_id')
+        new_name = self.request.query_params.get('new_name')
+        domain_name = self.request.query_params.get('domain_name')
 
+        city = City.objects.get(id=target_id)
+        new_city = City.objects.create(
+            name=new_name,
+            modalText=city.modalText,
+            info=city.info,
+            order_email=city.order_email,
+            order_phone=city.order_phone,
+            domain=domain_name,
+            sber_login=city.sber_login,
+            sber_pass=city.sber_pass,
+            sber_url=city.sber_url,
+            main_phone=city.main_phone,
+            contacts_text=city.contacts_text,
+            payment_text=city.payment_text,
+            delivery_times=city.delivery_times,
+            delivery_from_price=city.delivery_from_price,
+            delivery_price=city.delivery_price,
+            delivery_time=city.delivery_time,
+            about_image=city.about_image,
+            about_kitchen=city.about_kitchen,
+            vk_link=city.vk_link,
+            inst_link=city.inst_link,
+            policy_text=city.policy_text,
+            rules_text=city.rules_text,
+        )
+
+        categories = Category.objects.all()
+
+        for cat in categories:
+            cat.city.add(new_city)
+
+
+
+        itemprices = ItemPrice.objects.filter(city_id__in=[city.id])
+
+        for itemprice in itemprices:
+            print(itemprice)
+            itemprice.item.city.add(new_city)
+            ItemPrice.objects.create(
+                city=new_city,
+                item=itemprice.item,
+                old_price=itemprice.old_price,
+                old_price_33=itemprice.old_price_33,
+                price=itemprice.price,
+                price_33=itemprice.price_33,
+            )
+
+        souceprices = SoucePrice.objects.filter(city=city)
+        print('-----------------')
+        for souceprice in souceprices:
+            print(souceprice)
+            SoucePrice.objects.create(
+                city=new_city,
+                item=souceprice.item,
+                price=souceprice.price,
+            )
+        addprices = AdditionalIngridientPrice.objects.filter(city=city)
+
+        print('-----------------')
+        for addprice in addprices:
+            print(addprice)
+            AdditionalIngridientPrice.objects.create(
+                city=new_city,
+                ingridient=addprice.ingridient,
+                price=addprice.price,
+            )
