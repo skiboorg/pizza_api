@@ -129,7 +129,7 @@ class NewOrder(APIView):
         # for i in all_cart_souses:
         #     new_order.order_content += f'{i.item.name} X {i.quantity} '
 
-        new_order.order_code = f''.join(choices(string.digits, k=4))
+        new_order.order_code = f''.join(choices(string.digits, k=2))+'-'+ f''.join(choices(string.digits, k=4))
         if data.get('promo') > 0:
             new_order.price = new_order.price - (new_order.price * data.get('promo') / 100)
         if new_order.delivery_type == 'Курьером':
