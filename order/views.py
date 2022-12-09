@@ -133,13 +133,15 @@ class NewOrder(APIView):
         if data.get('promo') > 0:
             new_order.price = new_order.price - (new_order.price * data.get('promo') / 100)
         if new_order.delivery_type == 'Курьером':
-            new_order.price += 100
+            new_order.price += 120
         new_order.save()
 
         if new_order.payment == 'online':
             # new_order.is_payed = False
             # new_order.save()
             print_log(f'order go payment | order_code {new_order.order_code}')
+            print('username',new_order.city.sber_login)
+            print('pass',new_order.city.sber_pass)
             response = requests.get(f'{new_order.city.sber_url}?'
                                     f'amount={new_order.price}00&'
                                     'currency=643&'
