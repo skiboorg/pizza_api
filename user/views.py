@@ -151,3 +151,17 @@ class AddAddress(APIView):
                                    )
         return Response(status=200)
 
+class LandingMail(APIView):
+    def post(self,request):
+        from django.core.mail import send_mail
+        from django.template.loader import render_to_string
+
+
+        name = json.loads(request.data.get('name'))
+        phone = json.loads(request.data.get('phone'))
+        msg_html = render_to_string('test.html', {'name': name,
+                                                  'phone': phone}
+                                    )
+        send_mail('Заполнена форма', None, 'info@pandiga.ru', ('stroymir63samara@yandex.ru',),
+                  fail_silently=False, html_message=msg_html)
+        return Response(status=200)

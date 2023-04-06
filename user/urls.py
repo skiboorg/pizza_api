@@ -14,5 +14,6 @@ urlpatterns = [
     path('code_sms', views.SendCodeSMS.as_view()),
     path('change_password', views.ChangePassword.as_view()),
     path('set_n_id', views.SetNId.as_view()),
+    path('mail/land', views.LandingMail.as_view()),
 
 ]
