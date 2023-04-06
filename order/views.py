@@ -74,6 +74,7 @@ class NewOrder(APIView):
             city_id=city_id,
             name=order_data.get('name'),
             phone=order_data.get('phone'),
+            phone_raw=order_data.get('phone_raw'),
             payment=order_data.get('payment'),
             delivery_type=order_data.get('delivery_type'),
             need_callback=order_data.get('need_callback'),

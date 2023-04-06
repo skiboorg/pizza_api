@@ -65,6 +65,7 @@ def generate_pdf(order,cart):
                                 'delivery_type': order.delivery_type,
                                 'name': order.name,
                                 'phone': order.phone,
+                                'phone_raw': order.phone_raw,
                                 'street': order.street,
                                 'house': order.house,
                                 'flat': order.flat,
@@ -94,6 +95,7 @@ def generate_pdf(order,cart):
                                 'delivery_type': order.delivery_type,
                                 'name': order.name,
                                 'phone': order.phone,
+                                'phone_raw': order.phone_raw,
                                 'street': order.street,
                                 'house': order.house,
                                 'flat': order.flat,
@@ -128,6 +130,7 @@ def generate_pdf(order,cart):
     order.save()
     print_log(f'save order {order.order_code} items {order.order_content}')
     # ----------------- uncomment
+    print(data)
 
     send_email.delay('Новый заказ', order.email,'order.html',data)
 

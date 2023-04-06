@@ -29,6 +29,7 @@ class Order(models.Model):
     items = models.ManyToManyField(OrderItem, blank=True, verbose_name='Товары')
     name = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
+    phone_raw = models.CharField(max_length=255, null=True, blank=True)
     payment = models.CharField(max_length=255, null=True, blank=True)
     cafe_address = models.CharField(max_length=255, null=True, blank=True)
     delivery_type = models.CharField(max_length=255, null=True, blank=True)
