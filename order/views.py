@@ -153,7 +153,8 @@ class NewOrder(APIView):
                                     f'userName={new_order.city.sber_login}&'
                                     f'returnUrl={settings.SBER_API_RETURN_URL+source}&'
                                     f'failUrl={settings.SBER_API_FAIL_URL+source}&'
-                                    'pageView=DESKTOP&sessionTimeoutSecs=1200')
+                                    'pageView=DESKTOP&sessionTimeoutSecs=1200',
+                                    verify='Cert_CA.pem')
             response_data = json.loads(response.content)
 
             print(response_data)
