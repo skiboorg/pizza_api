@@ -13,6 +13,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.shortcuts import render,HttpResponseRedirect
 from .services import *
 from promotion.models import *
+from datetime import timedelta
 import settings
 import datetime
 from django.utils import timezone
@@ -196,6 +197,12 @@ class GetOrders(generics.ListAPIView):
         return Order.objects.filter(city_id=self.request.query_params.get('city_id'),
                                     # delivery_type='Курьером',
                                     date=start).order_by('-created_at')
+
+class RemoveOrders(APIView):
+    def get(self, request):
+        orders = Order.objects.filter(created_at__lt=timezone.now() - timedelta(days=30))
+        orders.delete()
+        return Response(status=200)
 
 class SetOrderView(APIView):
     def get(self, request):
