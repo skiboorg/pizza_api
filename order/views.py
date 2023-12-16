@@ -31,10 +31,12 @@ def pay_fail(request):
 
 class YooPaySuccess(APIView):
     def post(self,request):
-
-        logger.info(request.data)
-        return Response(status=200)
-
+        status = request.data['object']['status']
+        if status == 'succeeded':
+            logger.info(request.data)
+            return Response(status=200)
+        else:
+            return HttpResponseRedirect(f'{settings.RETURN_URL}/order/payment.order.order_code')
 @xframe_options_exempt
 def pay_success(request):
     payment_id = request.GET.get('orderId')
