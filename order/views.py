@@ -35,6 +35,13 @@ def yoo_pay_success(request):
     logger.info(str(request))
     return HttpResponseRedirect()
 
+class YooPaySuccess(APIView):
+    @xframe_options_exempt
+    def get(self,request):
+        print(request)
+        logger.info(request)
+        return HttpResponseRedirect()
+
 @xframe_options_exempt
 def pay_success(request):
     payment_id = request.GET.get('orderId')
@@ -170,7 +177,7 @@ class NewOrder(APIView):
                 },
                 "confirmation": {
                     "type": "redirect",
-                    "return_url": "https://meat-coal.ru/api/order/yoo_pay_success"
+                    "return_url": f"https://meat-coal.ru/order/{new_order.order_code}"
                 },
                 "capture": True,
                 "description": f"Оплата заказа {new_order.order_code}"
