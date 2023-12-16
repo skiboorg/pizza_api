@@ -32,11 +32,22 @@ def pay_fail(request):
 class YooPaySuccess(APIView):
     def post(self,request):
         status = request.data['object']['status']
+        source = request.GET.get('source')
         if status == 'succeeded':
             logger.info(request.data)
-            return Response(status=200)
-        else:
-            return HttpResponseRedirect(f'{settings.RETURN_URL}/order/payment.order.order_code')
+            payment = Payment.objects.get(sberId=request.data['object']['id'])
+            if not payment.order.is_payed:
+                payment.status = True
+                payment.save()
+                payment.order.is_payed = True
+                payment.order.save()
+                #generate_pdf(payment.order, payment.order.cart)
+            if source == 'mobile':
+                return render(request, 'pay_success.html', locals())
+            else:
+                return HttpResponseRedirect(f'{settings.RETURN_URL}/order/{payment.order.order_code}')
+
+
 @xframe_options_exempt
 def pay_success(request):
     payment_id = request.GET.get('orderId')
