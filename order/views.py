@@ -28,19 +28,12 @@ logger = logging.getLogger(__name__)
 def pay_fail(request):
         return HttpResponseRedirect(f'{settings.RETURN_URL}/order/fail')
 
-@xframe_options_exempt
-def yoo_pay_success(request):
-    print(request)
-    logger.info(request)
-    logger.info(str(request))
-    return HttpResponseRedirect()
 
 class YooPaySuccess(APIView):
-    @xframe_options_exempt
     def post(self,request):
-        print(request)
+
         logger.info(request.data)
-        return HttpResponseRedirect(f'{settings.RETURN_URL}/order/payment.order.order_code')
+        return Response(status=200)
 
 @xframe_options_exempt
 def pay_success(request):
