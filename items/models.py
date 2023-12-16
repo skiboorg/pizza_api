@@ -19,6 +19,8 @@ class City(models.Model):
     sber_login = models.CharField('Логин сбре', max_length=255, blank=False, null=True, default='')
     sber_pass = models.CharField('Пароль сбер', max_length=255, blank=False, null=True, default='')
     sber_url = models.CharField('Сбер URL', max_length=255, blank=False, null=True, default='')
+    shopID = models.CharField(max_length=255, blank=False, null=True)
+    secretKey = models.CharField(max_length=255, blank=False, null=True)
 
     main_phone = models.CharField('Телефон в шапке', max_length=255, blank=False, null=True)
     contacts_text = RichTextUploadingField('Тект для страницы контакты', blank=True, null=True)

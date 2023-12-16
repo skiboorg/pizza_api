@@ -18,9 +18,22 @@ import settings
 import datetime
 from django.utils import timezone
 
+from yookassa import Configuration, Payment as YooPayment
+
+import logging
+
+logger = logging.getLogger(__name__)
+
 @xframe_options_exempt
 def pay_fail(request):
         return HttpResponseRedirect(f'{settings.RETURN_URL}/order/fail')
+
+@xframe_options_exempt
+def yoo_pay_success(request):
+    print(request)
+    logger.info(request)
+    logger.info(str(request))
+    return HttpResponseRedirect()
 
 @xframe_options_exempt
 def pay_success(request):
@@ -141,27 +154,34 @@ class NewOrder(APIView):
         if new_order.payment == 'online':
             # new_order.is_payed = False
             # new_order.save()
+            # Configuration.account_id = new_order.city.shopID
+            # Configuration.secret_key = new_order.city.secretKey
+            Configuration.configure(new_order.city.shopID, new_order.city.secretKey)
+            print(new_order.city.shopID)
+            print(new_order.city.secretKey)
+            pay_id = uuid.uuid4()
+
             print_log(f'order go payment | order_code {new_order.order_code}')
-            print('username',new_order.city.sber_login)
-            print('pass',new_order.city.sber_pass)
-            response = requests.get(f'{new_order.city.sber_url}?'
-                                    f'amount={new_order.price}00&'
-                                    'currency=643&'
-                                    'language=ru&'
-                                    f'orderNumber={new_order.order_code}&'
-                                    f'description=Оплата заказа {new_order.order_code}.&'
-                                    f'password={new_order.city.sber_pass}&'
-                                    f'userName={new_order.city.sber_login}&'
-                                    f'returnUrl={settings.SBER_API_RETURN_URL+source}&'
-                                    f'failUrl={settings.SBER_API_FAIL_URL+source}&'
-                                    'pageView=DESKTOP&sessionTimeoutSecs=1200',
-                                    verify='Cert_CA.pem')
-            response_data = json.loads(response.content)
 
-            print(response_data)
+            payment = YooPayment.create({
+                "amount": {
+                    "value": new_order.price,
+                    "currency": "RUB"
+                },
+                "confirmation": {
+                    "type": "redirect",
+                    "return_url": "https://meat-coal.ru/api/order/yoo_pay_success"
+                },
+                "capture": True,
+                "description": f"Оплата заказа {new_order.order_code}"
+            }, uuid.uuid4())
 
-            formUrl = response_data.get('formUrl')
-            payment_id = response_data.get('orderId')
+            response = json.loads(payment.json())
+            print(response)
+
+
+            formUrl = response['confirmation']['confirmation_url']
+            payment_id = response.get('id')
 
             if formUrl:
                 Payment.objects.create(sberId=payment_id,
