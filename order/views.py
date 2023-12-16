@@ -37,7 +37,7 @@ def yoo_pay_success(request):
 
 class YooPaySuccess(APIView):
     @xframe_options_exempt
-    def get(self,request):
+    def post(self,request):
         print(request)
         logger.info(request)
         return HttpResponseRedirect()
