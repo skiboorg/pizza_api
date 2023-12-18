@@ -169,29 +169,46 @@ class NewOrder(APIView):
             # new_order.save()
             # Configuration.account_id = new_order.city.shopID
             # Configuration.secret_key = new_order.city.secretKey
-            Configuration.configure(new_order.city.shopID, new_order.city.secretKey)
-            print(new_order.city.shopID)
-            print(new_order.city.secretKey)
-            pay_id = uuid.uuid4()
+            # Configuration.configure(new_order.city.shopID, new_order.city.secretKey)
+            # print(new_order.city.shopID)
+            # print(new_order.city.secretKey)
+            # pay_id = uuid.uuid4()
+            #
+            # print_log(f'order go payment | order_code {new_order.order_code}')
+            #
+            # payment = YooPayment.create({
+            #     "amount": {
+            #         "value": new_order.price,
+            #         "currency": "RUB"
+            #     },
+            #     "confirmation": {
+            #         "type": "redirect",
+            #         "return_url": f"https://meat-coal.ru/order/{new_order.order_code}"
+            #     },
+            #     "capture": True,
+            #     "description": f"Оплата заказа {new_order.order_code}"
+            # }, uuid.uuid4())
+            #
+            # response = json.loads(payment.json())
+            # print(response)
 
-            print_log(f'order go payment | order_code {new_order.order_code}')
+            print('username',new_order.city.sber_login)
+            print('pass',new_order.city.sber_pass)
+            response = requests.get(f'{new_order.city.sber_url}?'
+                                    f'amount={new_order.price}00&'
+                                    'currency=643&'
+                                    'language=ru&'
+                                    f'orderNumber={new_order.order_code}&'
+                                    f'description=Оплата заказа {new_order.order_code}.&'
+                                    f'password={new_order.city.sber_pass}&'
+                                    f'userName={new_order.city.sber_login}&'
+                                    f'returnUrl={settings.SBER_API_RETURN_URL+source}&'
+                                    f'failUrl={settings.SBER_API_FAIL_URL+source}&'
+                                    'pageView=DESKTOP&sessionTimeoutSecs=1200',
+                                    verify='Cert_CA.pem')
+            response_data = json.loads(response.content)
 
-            payment = YooPayment.create({
-                "amount": {
-                    "value": new_order.price,
-                    "currency": "RUB"
-                },
-                "confirmation": {
-                    "type": "redirect",
-                    "return_url": f"https://meat-coal.ru/order/{new_order.order_code}"
-                },
-                "capture": True,
-                "description": f"Оплата заказа {new_order.order_code}"
-            }, uuid.uuid4())
-
-            response = json.loads(payment.json())
-            print(response)
-
+            print(response_data)
 
             formUrl = response['confirmation']['confirmation_url']
             payment_id = response.get('id')
