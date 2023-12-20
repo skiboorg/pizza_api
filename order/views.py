@@ -210,8 +210,11 @@ class NewOrder(APIView):
 
             print(response_data)
 
-            formUrl = response['confirmation']['confirmation_url']
-            payment_id = response.get('id')
+            # formUrl = response['confirmation']['confirmation_url']
+            # payment_id = response.get('id')
+
+            formUrl = response_data.get('formUrl')
+            payment_id = response_data.get('orderId')
 
             if formUrl:
                 Payment.objects.create(sberId=payment_id,
