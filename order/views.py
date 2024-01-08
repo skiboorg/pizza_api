@@ -161,7 +161,7 @@ class NewOrder(APIView):
         if data.get('promo') > 0:
             new_order.price = new_order.price - (new_order.price * data.get('promo') / 100)
         if new_order.delivery_type == 'Курьером':
-            new_order.price += 120
+            new_order.price += 150
         new_order.save()
 
         if new_order.payment == 'online':
