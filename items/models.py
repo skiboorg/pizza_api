@@ -27,7 +27,7 @@ class City(models.Model):
     payment_text = RichTextUploadingField('Тект для опллаты', blank=True, null=True)
     delivery_times = models.CharField('ДОСТАВКА РАБОТАЕТ', max_length=255, blank=False, null=True)
     delivery_from_price = models.CharField('СУММА ЗАКАЗА', max_length=255, blank=False, null=True)
-    delivery_price = models.CharField('ЦЕНА ДОСТАВКИ', max_length=255, blank=False, null=True)
+    delivery_price = models.IntegerField('ЦЕНА ДОСТАВКИ', max_length=255, blank=False, default=150)
     delivery_time = models.CharField('ВРЕМЯ ДОСТАВКИ', max_length=255, blank=False, null=True)
     about_image = models.ImageField('Главное изображение на странице о нас', upload_to='city/', blank=True)
     about_kitchen = models.ImageField('Изображение кухни на странице о нас', upload_to='city/', blank=True)

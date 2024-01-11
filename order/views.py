@@ -17,7 +17,7 @@ from datetime import timedelta
 import settings
 import datetime
 from django.utils import timezone
-
+from items.models import City
 from yookassa import Configuration, Payment as YooPayment
 
 import logging
@@ -96,6 +96,8 @@ class NewOrder(APIView):
         except:
             pass
 
+        city = City.objects.get(id=city_id)
+
         new_order = Order.objects.create(
             cart=cart,
             city_id=city_id,
@@ -161,7 +163,7 @@ class NewOrder(APIView):
         if data.get('promo') > 0:
             new_order.price = new_order.price - (new_order.price * data.get('promo') / 100)
         if new_order.delivery_type == 'Курьером':
-            new_order.price += 150
+            new_order.price += city.delivery_price
         new_order.save()
 
         if new_order.payment == 'online':
