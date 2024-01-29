@@ -1,5 +1,6 @@
 djangorestframework
 django-cors-headers
+django-cleanup
 pillow
 djoser
 pytils
@@ -12,3 +13,6 @@ celery
 redis
 
 yookassa
+
+flask
+python-telegram-bot==13.15

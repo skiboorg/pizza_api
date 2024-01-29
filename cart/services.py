@@ -220,9 +220,9 @@ def erase_cart(cart):
     all_cart_items = cart.items.all()
     for i in all_cart_items:
         remove_cart_item(i)
-    all_cart_constructors = cart.pizza_constructors.all()
-    for i in all_cart_constructors:
-        i.delete()
+    #all_cart_constructors = cart.pizza_constructors.all()
+    # for i in all_cart_constructors:
+    #     i.delete()
     all_cart_souses = cart.souces.all()
     for i in all_cart_souses:
         i.delete()

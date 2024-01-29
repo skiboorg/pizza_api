@@ -1,3 +1,4 @@
+import json
 from random import choices
 import string
 import requests
@@ -84,3 +85,17 @@ def sendPush(send_to,mode, title, text, n_id=None, url=None, city=None):
         print(result)
 
 
+def send_telegramm_notify(text,chat_id):
+    response = requests.get(f'https://api.telegram.org/bot{settings.TG_BOT_TOKEN}/sendMessage?chat_id={chat_id}&'
+                            f'text={text}')
+    print(response.text)
+    return
+
+def send_tg_mgs(to_id,message):
+    Headers = { 'Content-Type':'application/json'}
+    data = {
+        "chat_id":to_id,
+        "message":message
+    }
+    res = requests.post('http://0.0.0.0:5000/send_message',headers=Headers,data=json.dumps(data))
+    print(res)

@@ -13,9 +13,9 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.shortcuts import render,HttpResponseRedirect
 from .services import *
 from promotion.models import *
-from datetime import timedelta
+
 import settings
-import datetime
+
 from django.utils import timezone
 from items.models import City
 from yookassa import Configuration, Payment as YooPayment
@@ -33,15 +33,16 @@ class YooPaySuccess(APIView):
     def post(self,request):
         status = request.data['object']['status']
         source = request.GET.get('source')
+        logger.info(request.data)
         if status == 'succeeded':
-            logger.info(request.data)
+
             payment = Payment.objects.get(sberId=request.data['object']['id'])
             if not payment.order.is_payed:
                 payment.status = True
                 payment.save()
                 payment.order.is_payed = True
                 payment.order.save()
-                #generate_pdf(payment.order, payment.order.cart)
+                generate_pdf(payment.order, payment.order.cart)
             if source == 'mobile':
                 return render(request, 'pay_success.html', locals())
             else:
@@ -167,56 +168,56 @@ class NewOrder(APIView):
         new_order.save()
 
         if new_order.payment == 'online':
-            # new_order.is_payed = False
-            # new_order.save()
-            # Configuration.account_id = new_order.city.shopID
-            # Configuration.secret_key = new_order.city.secretKey
-            # Configuration.configure(new_order.city.shopID, new_order.city.secretKey)
-            # print(new_order.city.shopID)
-            # print(new_order.city.secretKey)
-            # pay_id = uuid.uuid4()
+            new_order.is_payed = False
+            new_order.save()
+            Configuration.account_id = new_order.city.shopID
+            Configuration.secret_key = new_order.city.secretKey
+            Configuration.configure(new_order.city.shopID, new_order.city.secretKey)
+            print(new_order.city.shopID)
+            print(new_order.city.secretKey)
+            pay_id = uuid.uuid4()
+
+            print_log(f'order go payment | order_code {new_order.order_code}')
+
+            payment = YooPayment.create({
+                "amount": {
+                    "value": new_order.price,
+                    "currency": "RUB"
+                },
+                "confirmation": {
+                    "type": "redirect",
+                    "return_url": f"https://meat-coal.ru"
+                },
+                "capture": True,
+                "description": f"Оплата заказа {new_order.order_code}"
+            }, uuid.uuid4())
+
+            response = json.loads(payment.json())
+            print(response)
+
+            # print('username',new_order.city.sber_login)
+            # print('pass',new_order.city.sber_pass)
+            # response = requests.get(f'{new_order.city.sber_url}?'
+            #                         f'amount={new_order.price}00&'
+            #                         'currency=643&'
+            #                         'language=ru&'
+            #                         f'orderNumber={new_order.order_code}&'
+            #                         f'description=Оплата заказа {new_order.order_code}.&'
+            #                         f'password={new_order.city.sber_pass}&'
+            #                         f'userName={new_order.city.sber_login}&'
+            #                         f'returnUrl={settings.SBER_API_RETURN_URL+source}&'
+            #                         f'failUrl={settings.SBER_API_FAIL_URL+source}&'
+            #                         'pageView=DESKTOP&sessionTimeoutSecs=1200',
+            #                         verify='Cert_CA.pem')
+            # response_data = json.loads(response.content)
             #
-            # print_log(f'order go payment | order_code {new_order.order_code}')
-            #
-            # payment = YooPayment.create({
-            #     "amount": {
-            #         "value": new_order.price,
-            #         "currency": "RUB"
-            #     },
-            #     "confirmation": {
-            #         "type": "redirect",
-            #         "return_url": f"https://meat-coal.ru/order/{new_order.order_code}"
-            #     },
-            #     "capture": True,
-            #     "description": f"Оплата заказа {new_order.order_code}"
-            # }, uuid.uuid4())
-            #
-            # response = json.loads(payment.json())
-            # print(response)
+            # print(response_data)
 
-            print('username',new_order.city.sber_login)
-            print('pass',new_order.city.sber_pass)
-            response = requests.get(f'{new_order.city.sber_url}?'
-                                    f'amount={new_order.price}00&'
-                                    'currency=643&'
-                                    'language=ru&'
-                                    f'orderNumber={new_order.order_code}&'
-                                    f'description=Оплата заказа {new_order.order_code}.&'
-                                    f'password={new_order.city.sber_pass}&'
-                                    f'userName={new_order.city.sber_login}&'
-                                    f'returnUrl={settings.SBER_API_RETURN_URL+source}&'
-                                    f'failUrl={settings.SBER_API_FAIL_URL+source}&'
-                                    'pageView=DESKTOP&sessionTimeoutSecs=1200',
-                                    verify='Cert_CA.pem')
-            response_data = json.loads(response.content)
+            formUrl = response['confirmation']['confirmation_url']
+            payment_id = response.get('id')
 
-            print(response_data)
-
-            # formUrl = response['confirmation']['confirmation_url']
-            # payment_id = response.get('id')
-
-            formUrl = response_data.get('formUrl')
-            payment_id = response_data.get('orderId')
+            # formUrl = response_data.get('formUrl')
+            # payment_id = response_data.get('orderId')
 
             if formUrl:
                 Payment.objects.create(sberId=payment_id,
@@ -253,11 +254,7 @@ class GetOrders(generics.ListAPIView):
                                     # delivery_type='Курьером',
                                     date=start).order_by('-created_at')
 
-class RemoveOrders(APIView):
-    def get(self, request):
-        orders = Order.objects.filter(created_at__lt=timezone.now() - timedelta(days=30))
-        orders.delete()
-        return Response(status=200)
+
 
 class SetOrderView(APIView):
     def get(self, request):

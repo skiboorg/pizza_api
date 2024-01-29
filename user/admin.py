@@ -22,6 +22,8 @@ class UserAdmin(BaseUserAdmin):
              'promo',
              'fio',
              'bonuses',
+             'tg_username',
+             'tg_id',
 
          )}
          ),

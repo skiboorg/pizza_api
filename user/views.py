@@ -4,7 +4,7 @@ import requests
 from random import choices
 import string
 from django.http import HttpResponseRedirect
-
+from .services import create_random_string, send_tg_mgs
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -29,6 +29,8 @@ class UserUpdate(APIView):
         serializer = UserSerializer(user, data=request.data['userData'])
         if serializer.is_valid():
             serializer.save()
+            user.tg_id = None
+            user.save()
             return Response(status=200)
         else:
             print(serializer.errors)
@@ -87,12 +89,23 @@ class ChangePassword(APIView):
         return Response(status=200)
 
 
-class SendCodeSMS(APIView):
+class SendCode(APIView):
     def post(self, request):
         print(request.data)
         phone = request.data.get('phone')
-
-        result = send_sms(phone,True,text='Мясо на углях. Код подтверждения:')
+        result = {}
+        try:
+            user = User.objects.get(phone=phone)
+            if not user.tg_id:
+                result = {'success': False, 'message': 'Телеграм username не привязан к аккаунту<br>Свяжитесь с тех.поддержкой'}
+            else:
+                code = create_random_string(digits=True, num=6)
+                send_tg_mgs(user.tg_id, f'Ваш новый пароль {code}')
+                user.set_password(code)
+                user.save()
+                result = {'success': True, 'message': f'Новый отправлен,<br> проверьте чат с meat_coal_bot'}
+        except:
+            result = {'success':False,'message':'Пользователь не найден'}
 
         return Response(result,status=200)
 

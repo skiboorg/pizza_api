@@ -241,20 +241,10 @@ class DeleteCartSouse(APIView):
 
 class RemoveCart(APIView):
     def get(self, request):
-        items = Cart.objects.all()
-        items.delete()
-        items = Guest.objects.all()
-        items.delete()
-        items = CartConstructor.objects.all()
-        items.delete()
-        items = CartSouce.objects.all()
-        items.delete()
-        items = CartItemBaseIngrigient.objects.all()
-        items.delete()
-        items = CartItemAdditionalIngrigient.objects.all()
-        items.delete()
-        items = CartItem.objects.all()
-        items.delete()
+        from .tasks import remove_guests
+        from order.tasks import remove_orders
+        remove_guests()
+        remove_orders()
         return Response(status=200)
 
 class RemoveSouseQuantity(APIView):

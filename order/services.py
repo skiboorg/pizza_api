@@ -1,13 +1,9 @@
-import pydf
-import requests
 from django.template.loader import render_to_string
 from items.models import ItemPrice,SoucePrice,AdditionalIngridientPrice
 import settings
-from django.core.mail import send_mail,EmailMessage
 
-from user.services import sendPush
 import logging
-from .tasks import send_email
+from user.services import send_tg_mgs, send_telegramm_notify
 logger = logging.getLogger('django', )
 
 def print_log(text):
@@ -117,11 +113,12 @@ def generate_pdf(order,cart):
                                 'bonuses':order.bonuses,
 
                             })
-    # pdf = pydf.generate_pdf(html)
-    # filename = f'orders/{order.order_code}.pdf'
-    # with open(filename, mode= 'wb') as f:
-    #     f.write(pdf)
-    # send_email(filename,order)
+    #pdf = pydf.generate_pdf(html)
+    filename = f'media/orders/{order.order_code}.html'
+    with open(filename, mode= 'w+') as f:
+        f.write(str(html))
+    order.file = f'orders/{order.order_code}.html'
+
     for i in items:
         order.order_content += f'{i}<br>'
     order.order_content += '<br>'
@@ -132,47 +129,11 @@ def generate_pdf(order,cart):
     # ----------------- uncomment
     print(data)
 
-    send_email.delay('Новый заказ', order.email,'order.html',data)
+    send_telegramm_notify(f'Новый заказ {order.order_code}. https://meat-coal.ru/media/orders/{order.order_code}.html',order.city.tg_chat_id)
 
-    url1 = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
-           f'psw={settings.SMS_PASSWORD}&' \
-           f'phones={order.city.order_phone}&' \
-           f'mes=Новый заказ №{order.order_code}&' \
-           f'sender=kafeMyasoug'
-    response2 = requests.post(url1)
-    if order.client:
-        if order.client.notification_id:
-            sendPush('client', mode='single', title='Ваш заказ принят', text=f'Номер заказа {order.order_code}.', n_id=order.client.notification_id)
-        else:
-            url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
-                  f'psw={settings.SMS_PASSWORD}&' \
-                  f'phones={order.phone}&' \
-                  f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
-                  f'sender=kafeMyasoug'
-            response1 = requests.post(url)
-    else:
-        url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
-              f'psw={settings.SMS_PASSWORD}&' \
-              f'phones={order.phone}&' \
-               f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
-              f'sender=kafeMyasoug'
-        response1 = requests.post(url)
-
-     # -----------------
+    if order.client and order.client.tg_id:
+        send_tg_mgs(order.client.tg_id,f'Ваш заказ принят. Номер заказа: {order.order_code}')
 
     print_log(f'order {order.order_code} erase cart')
     erase_cart(cart)
 
-
-# def send_email(filename,order):
-#     url = f'https://smsc.ru/sys/send.php?login={settings.SMS_LOGIN}&' \
-#           f'psw={settings.SMS_PASSWORD}&' \
-#           f'phones={order.phone}&' \
-#            f'mes=Мясо на углях: Номер заказа {order.order_code} | Новый Уренгой +7 (3494) 29 24 07 | Тарко-Сале +7(34997)29-599&' \
-#           f'sender=kafeMyasoug'
-#     response = requests.post(url)
-#     print(response.text)
-#     mail = EmailMessage('Новый заказ', 'Новый заказ', settings.MAIL_TO, (settings.MAIL_TO,))
-#     # mail.attach(file.name, file.read(), file.content_type)
-#     mail.attach_file(filename)
-#     mail.send()

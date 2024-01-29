@@ -58,6 +58,7 @@ class Order(models.Model):
     is_payed = models.BooleanField(default=False)
     is_new = models.BooleanField(default=False)
     email = models.CharField(max_length=50, blank=True, null=True)
+    file = models.FileField(upload_to='orders/', blank=True, null=True)
     def __str__(self):
         if self.client:
             return f'№{self.order_code} | {self.created_at} |  Заказ клиента на сумму: {self.price}'

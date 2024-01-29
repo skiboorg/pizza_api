@@ -10,6 +10,7 @@ urlpatterns = [
     path('get_orders', views.GetOrders.as_view()),
     path('set_order_view', views.SetOrderView.as_view()),
     path('get_user_orders', views.GetUserOrders.as_view()),
-    path('remove_orders', views.RemoveOrders.as_view()),
+
 
 ]
+# https://meat-coal.ru/api/order/yoo_pay_success

@@ -45,6 +45,8 @@ class User(AbstractUser):
     email = models.EmailField('Эл. почта',blank=True,null=True, unique=True)
     fio = models.CharField('ФИО', max_length=50, blank=True, null=True)
     phone = models.CharField('Телефон', max_length=50, blank=True, null=True,unique=True)
+    tg_username = models.CharField(max_length=50, blank=True, null=True)
+    tg_id = models.CharField(max_length=50, blank=True, null=True)
     profile_ok = models.BooleanField(default=False)
     birthday = models.DateField('Д/Р', blank=True, null=True)
     bonuses = models.IntegerField(default=0)
