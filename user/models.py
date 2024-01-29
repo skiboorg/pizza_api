@@ -42,7 +42,6 @@ class User(AbstractUser):
     city = models.ForeignKey('items.City', on_delete=models.SET_NULL, null=True, blank=True)
     promo = models.ForeignKey(Promo, on_delete=models.CASCADE, blank=True, null=True)
     session = models.CharField('Ключ сессии', max_length=255, blank=True, null=True)
-    email = models.EmailField('Эл. почта',blank=True,null=True, unique=True)
     fio = models.CharField('ФИО', max_length=50, blank=True, null=True)
     phone = models.CharField('Телефон', max_length=50, blank=True, null=True,unique=True)
     tg_username = models.CharField(max_length=50, blank=True, null=True)
