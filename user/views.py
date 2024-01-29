@@ -57,7 +57,7 @@ class UserRecoverPassword(APIView):
             user = None
         if user:
             messageSend = True
-            return Response({'result': True, 'email': user.email}, status=200)
+            return Response({'result': True}, status=200)
         else:
             return Response({'result': False}, status=200)
 
