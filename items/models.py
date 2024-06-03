@@ -41,7 +41,7 @@ class City(models.Model):
 
     metrika_id = models.CharField('ID Metrika', max_length=255, blank=True, null=True)
     call_tracker_id = models.CharField('ID Calltrack', max_length=255, blank=True, null=True)
-
+    use_doogly = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.name}'
@@ -266,3 +266,13 @@ class ItemPrice(models.Model):
 
 
 
+class DooglyItem(models.Model):
+    city = models.ForeignKey(City, verbose_name='Город', on_delete=models.CASCADE, blank=False, null=True)
+    item = models.ForeignKey(Item, verbose_name='Товар', on_delete=models.CASCADE, blank=False, null=True)
+    doogly_id = models.CharField('ID Doogly', max_length=255, blank=False, null=True)
+
+    def __str__(self):
+        return f'{self.item.name}-{self.doogly_id}'
+    class Meta:
+        verbose_name = "Связь товара с ID Doogly"
+        verbose_name_plural = "Связи товаров с ID Doogly"
