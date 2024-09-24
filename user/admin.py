@@ -33,4 +33,5 @@ admin.site.register(User,UserAdmin)
 admin.site.register(Guest)
 admin.site.register(UserAddress)
 admin.site.register(Promo)
+admin.site.register(PromoUsed)
 

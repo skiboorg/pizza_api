@@ -140,12 +140,25 @@ class UsePromo(APIView):
             promo = Promo.objects.get(code=code)
             # user.promo = promo
             # user.save()
+            if promo.is_only_for_registered and not user.is_authenticated:
+                print('promo.is_only_for_registered and not user.is_authenticated')
+                return Response({'status': False}, status=200)
+
+            if promo.is_only_for_registered:
+                print('promo.is_only_for_registered')
+                used_promo_qs = PromoUsed.objects.filter(user=user, promo=promo)
+                if used_promo_qs.exists():
+                    return Response({'status': False}, status=200)
+                else:
+                    PromoUsed.objects.create(user=user, promo=promo)
+
             if promo.uses >= 1:
                 promo.uses -= 1
                 promo.save()
                 return Response({'status': True,'discount':promo.discount}, status=200)
             else:
                 return Response({'status': False}, status=200)
+
         except Promo.DoesNotExist:
             return Response({'status':False},status=200)
 

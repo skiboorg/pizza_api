@@ -27,11 +27,15 @@ class UserManager(BaseUserManager):
 
         return self._create_user(phone, password, **extra_fields)
 
-class Promo(models.Model):
 
-    code = models.CharField('Промокод',max_length=50, blank=True, null=True)
-    discount = models.IntegerField('% скидки',default=0)
-    uses = models.IntegerField('Кол-во использований',default=0)
+class Promo(models.Model):
+    code = models.CharField('Промокод', max_length=50, blank=True, null=True)
+    discount = models.IntegerField('% скидки', default=0)
+    uses = models.IntegerField('Кол-во использований', default=0)
+    is_only_for_registered = models.BooleanField('Только для зареганных', default=False, null=False)
+
+    def __str__(self):
+        return f'{self.code} - {self.discount} % - {self.uses}'
 
 
 class User(AbstractUser):
@@ -83,3 +87,9 @@ class UserAddress(models.Model):
     floor = models.CharField( max_length=50, blank=True, null=True)
 
 
+
+
+class PromoUsed(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,blank=True,null=True)
+    promo = models.ForeignKey(Promo,on_delete=models.CASCADE,blank=True,null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
